@@ -10,13 +10,23 @@ It consists of 3 parts:
 
 ## Setting up your environment
 
-You'll need [Docker](https://www.docker.com/). With Docker installed, build the base image and development image, and start a development server instance:
+1. Install [Docker](https://www.docker.com/)
+2. Fetch git submodules:
 
-```sh
-docker build -t wptd-base -f Dockerfile.base .
-docker build -t wptd-dev -f Dockerfile.dev .
-./util/docker-dev/run.sh
-```
+   ```sh
+   git submodule update --init
+   ```
+3. Build the base image and development image:
+
+   ```sh
+   docker build -t wptd-base -f Dockerfile.base .
+   docker build -t wptd-dev -f Dockerfile.dev .
+   ```
+4. Start a development server instance:
+
+   ```sh
+   ./util/docker-dev/run.sh
+   ```
 
 This starts a Docker instance named `wptd-dev-instance`.
 
