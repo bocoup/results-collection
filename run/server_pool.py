@@ -22,7 +22,8 @@ class ServerPool(object):
     def for_job(self, browser, job):
         server = self._find(browser, job)
 
-        yield server
-
-        server.lock.release()
-        self.server_ready.set()
+        try:
+            yield server
+        finally:
+            server.lock.release()
+            self.server_ready.set()
