@@ -5,6 +5,7 @@
 import contextlib
 import threading
 
+
 class FilteredPool(object):
     '''Maintain a set of values that may be "leased" by exactly one thread of
     execution at any time. This differs from a traditional thread-save queue in

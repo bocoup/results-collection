@@ -27,12 +27,15 @@ jobs = [
     {'paths': ['service-workers']}
 ]
 
+
 class ServerPool(FilteredPool):
     def match(self, server, browser, job):
         return server['browser_name'] == browser['name']
 
+
 server_pool = ServerPool(servers)
 threads = []
+
 
 def simulate_job(job):
     if 'css' in job['paths']:
@@ -45,6 +48,7 @@ def simulate_job(job):
     import time
     time.sleep(duration)
 
+
 def run_job(browser, job):
     with server_pool.lease(browser, job) as server:
         run_id = '%s\t%s\t%s' % (
@@ -54,6 +58,7 @@ def run_job(browser, job):
         simulate_job(job)
 
         sys.stdout.write('finish\t%s\n' % run_id)
+
 
 for browser in browsers:
     for job in jobs:

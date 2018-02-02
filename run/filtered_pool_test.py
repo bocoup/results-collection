@@ -7,8 +7,10 @@ import threading
 
 from filtered_pool import FilteredPool
 
+
 class CustomError(Exception):
     pass
+
 
 class LockStepThread(threading.Thread):
     '''Utility for explicitly managing control flow in threads.'''
@@ -36,6 +38,7 @@ class LockStepThread(threading.Thread):
         self.e.set()
         self.e.clear()
 
+
 class TestFilteredPool(unittest.TestCase):
 
     def test_allmatch_sync_level_0(self):
@@ -57,7 +60,7 @@ class TestFilteredPool(unittest.TestCase):
             self.assertEqual(item, 0)
 
             with pool.lease() as item:
-               self.assertEqual(item, 1)
+                self.assertEqual(item, 1)
 
         with pool.lease() as item:
             self.assertEqual(item, 0)
@@ -307,6 +310,7 @@ class TestFilteredPool(unittest.TestCase):
         threads[0].join()
         threads[1].join()
         threads[3].join()
+
 
 if __name__ == '__main__':
     unittest.main()
