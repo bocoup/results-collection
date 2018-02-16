@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"sort"
 
+	"time"
 	models "github.com/w3c/wptdashboard/shared"
 )
 
@@ -60,6 +61,7 @@ func IsBrowserName(name string) bool {
 }
 
 func loadBrowserNames() error {
+	time.Sleep(1000 * time.Millisecond)
 	var browsers map[string]models.Browser
 	var err error
 	if browsers, err = GetBrowsers(); err != nil {
