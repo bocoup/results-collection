@@ -1,1 +1,6 @@
-localhost ansible_connection=local browser=chrome-64.0-linux
+[buildbot-master]
+localhost ansible_connection=local application_user=wptrunner
+
+[buildbot-workers]
+localworker1 ansible_connection=local application_user=sally buildbot_worker_password=bar
+localworker2 ansible_connection=local application_user=george buildbot_worker_password=baz
