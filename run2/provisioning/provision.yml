@@ -1,0 +1,19 @@
+---
+- hosts: all
+  gather_facts: False
+  pre_tasks:
+    - name: Install Python for Ansible
+      raw: |-
+        test -e /usr/bin/python || \
+          (sudo apt -y update && sudo apt install -y python-minimal)
+      changed_when: False
+- hosts: buildbot-master
+  become: true
+  roles:
+    - buildbot
+    - buildbot-master
+- hosts: buildbot-workers
+  become: true
+  roles:
+    - buildbot
+    - buildbot-worker

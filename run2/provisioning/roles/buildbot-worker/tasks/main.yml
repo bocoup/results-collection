@@ -1,0 +1,41 @@
+---
+- name: Create group
+  group:
+    name: '{{application_group}}'
+    state: present
+    system: true
+
+- name: Create user account
+  user:
+    name: '{{worker_name}}'
+    state: present
+    system: true
+    shell: /bin/bash
+
+- name: Create a Buildbot worker
+  command: |
+    sudo --user {{worker_name}}
+        buildbot-worker create-worker {{home_dir}}/worker {{master_hostname}} {{worker_name}} {{worker_password}}
+  args:
+    chdir: '{{home_dir}}'
+    creates: '{{home_dir}}/worker'
+
+- name: Insert description of worker system
+  template:
+    src: host
+    owner: '{{worker_name}}'
+    group: '{{application_group}}'
+    dest: '{{home_dir}}/worker/info/host'
+
+- name: Define a system service
+  template:
+    src: buildbot-worker.service
+    dest: /etc/systemd/system/buildbot-worker.service
+  notify:
+    - Restart "build worker" service
+
+- name: Enable system service
+  systemd:
+    name: buildbot-worker
+    enabled: true
+    state: started

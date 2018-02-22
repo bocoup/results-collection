@@ -1,0 +1,4 @@
+---
+application_group: wpt
+application_user: wptmaster
+home_dir: '/home/{{application_user}}'
