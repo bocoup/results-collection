@@ -1,0 +1,11 @@
+# Adapted from:
+# https://www.digitalocean.com/community/tutorials/how-to-create-systemd-unit-files-for-buildbot
+[Unit]
+Description=BuildBot worker service
+After=network.target
+
+[Service]
+User={{worker_name}}
+Group={{application_group}}
+WorkingDirectory={{home_dir}}
+ExecStart=/usr/local/bin/buildbot-worker start --nodaemon {{home_dir}}/worker

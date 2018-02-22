@@ -1,0 +1,14 @@
+# Adapted from:
+# https://www.digitalocean.com/community/tutorials/how-to-create-systemd-unit-files-for-buildbot
+[Unit]
+Description=BuildBot master service
+After=network.target
+
+[Service]
+User={{application_user}}
+Group={{application_group}}
+WorkingDirectory={{home_dir}}/master
+ExecStart=/usr/bin/authbind /usr/local/bin/buildbot start --nodaemon
+
+[Install]
+WantedBy=multi-user.target
