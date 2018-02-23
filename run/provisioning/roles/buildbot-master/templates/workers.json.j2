@@ -1,0 +1,8 @@
+[
+{% for worker_host in groups['buildbot-workers'] %}
+  {
+    "name": "{{hostvars[worker_host].worker_name}}",
+    "password": "{{hostvars[worker_host].worker_password}}"
+  }{% if not loop.last %},{% endif %}
+{% endfor %}
+]
