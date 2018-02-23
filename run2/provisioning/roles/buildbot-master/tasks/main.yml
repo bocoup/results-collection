@@ -34,19 +34,25 @@
     chdir: '{{home_dir}}'
     creates: '{{home_dir}}/master'
 
-- name: Insert configuration file
+- name: Insert Buildbot worker definition file
   template:
-    src: master.cfg
+    src: workers.json.j2
     owner: '{{application_user}}'
     group: '{{application_group}}'
-    dest: '{{home_dir}}/master/master.cfg'
-    validate: buildbot checkconfig %s
+    dest: '{{home_dir}}/master/workers.json'
+  notify:
+    - Restart "build master" service
+
+- name: Copy Buildbot configuration files into place
+  copy:
+    src: master/
+    dest: '{{home_dir}}/master'
   notify:
     - Restart "build master" service
 
 - name: Define a system service
   template:
-    src: buildbot-master.service
+    src: buildbot-master.service.j2
     dest: /etc/systemd/system/buildbot-master.service
   notify:
     - Restart "build master" service

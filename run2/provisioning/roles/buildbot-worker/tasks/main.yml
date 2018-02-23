@@ -22,14 +22,14 @@
 
 - name: Insert description of worker system
   template:
-    src: host
+    src: host.j2
     owner: '{{worker_name}}'
     group: '{{application_group}}'
     dest: '{{home_dir}}/worker/info/host'
 
 - name: Define a system service
   template:
-    src: buildbot-worker.service
+    src: buildbot-worker.service.j2
     dest: /etc/systemd/system/buildbot-worker.service
   notify:
     - Restart "build worker" service
