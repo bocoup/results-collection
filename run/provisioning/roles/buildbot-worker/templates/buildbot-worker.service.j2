@@ -1,11 +1,19 @@
 # Adapted from:
-# https://www.digitalocean.com/community/tutorials/how-to-create-systemd-unit-files-for-buildbot
+# https://github.com/buildbot/buildbot-contrib/blob/a0f5d3898b9955c7d97b7dd2346a85e27252bb60/worker/contrib/systemd/buildbot-worker.service
 [Unit]
-Description=BuildBot worker service
+Description=Buildbot Worker
+Wants=network.target
 After=network.target
 
 [Service]
-User={{worker_name}}
-Group={{application_group}}
+Type=forking
+PIDFile={{home_dir}}/worker/twistd.pid
 WorkingDirectory={{home_dir}}
-ExecStart=/usr/local/bin/buildbot-worker start --nodaemon {{home_dir}}/worker
+ExecStart=/usr/local/bin/buildbot-worker start worker
+ExecReload=/usr/local/bin/buildbot-worker restart worker
+ExecStop=/usr/local/bin/buildbot-worker stop worker
+Restart=always
+User={{worker_name}}
+
+[Install]
+WantedBy=multi-user.target
