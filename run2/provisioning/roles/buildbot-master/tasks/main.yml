@@ -45,7 +45,7 @@
 
 - name: Copy Buildbot configuration files into place
   copy:
-    src: master/
+    src: ../src/master/
     dest: '{{home_dir}}/master'
   notify:
     - Restart "build master" service
