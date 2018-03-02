@@ -43,6 +43,21 @@
   notify:
     - Restart "build master" service
 
+- name: Insert OAuth configuration file
+  template:
+    src: oauth.json.j2
+    owner: '{{application_user}}'
+    group: '{{application_group}}'
+    dest: '{{home_dir}}/master/oauth.json'
+  notify:
+    - Restart "build master" service
+
+# The "requests" module is a soft requirement of Buildbot, necessary only when
+# using the OAUth functionality.
+- name: Install "requests" Python package
+  pip:
+    name: requests
+
 - name: Copy Buildbot configuration files into place
   copy:
     src: ../src/master/
