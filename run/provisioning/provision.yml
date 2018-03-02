@@ -12,6 +12,9 @@
   roles:
     - buildbot
     - buildbot-master
+  vars_files:
+    - vars/main.yml
+    - vars/vault
 - hosts: buildbot-workers
   become: true
   roles:
