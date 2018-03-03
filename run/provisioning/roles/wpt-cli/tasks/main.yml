@@ -6,3 +6,15 @@
   with_items:
     - python-pip
     - python2.7
+
+- name: Install script for modifying system hosts file
+  copy:
+    src: set-hosts.sh
+    dest: /usr/local/bin/set-hosts.sh
+    mode: 0755
+
+# This allows workers to edit the hostsfile via `sudo set-hosts.sh`
+- name: Allow application user to modify system hosts file
+  lineinfile:
+    dest: /etc/sudoers
+    line: '{{application_user}} ALL=(ALL) NOPASSWD: /usr/local/bin/set-hosts.sh'
