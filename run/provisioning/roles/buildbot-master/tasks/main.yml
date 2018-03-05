@@ -30,14 +30,35 @@
   notify:
     - Restart "build master" service
 
-- name: Insert OAuth configuration file
-  template:
-    src: oauth.json.j2
+- name: Create directory to store secrets
+  file:
+    path: '{{home_dir}}/master/secrets'
+    state: directory
     owner: '{{application_user}}'
     group: '{{application_group}}'
-    dest: '{{home_dir}}/master/oauth.json'
-  notify:
-    - Restart "build master" service
+    mode: 0700
+
+- name: Insert secrets
+  copy:
+    content: '{{item.value}}'
+    dest: '{{home_dir}}/master/secrets/{{item.name}}'
+    owner: '{{application_user}}'
+    group: '{{application_group}}'
+    mode: 0700
+  with_items:
+    - name: sauce_labs_user
+      value: '{{sauce_labs_user}}'
+    - name: sauce_labs_key
+      value: '{{sauce_labs_key}}'
+    - name: oauth_github_client_id
+      value: '{{oauth_github_client_id}}'
+    - name: oauth_github_client_secret
+      value: '{{oauth_github_client_secret}}'
+    # The following value isn't sensitive in nature, but it is deployed to the
+    # build master as a "secret" in order to normalize handling of
+    # configuration data.
+    - name: oauth_github_org_pattern
+      value: '{{oauth_github_org_pattern}}'
 
 # The "requests" module is a soft requirement of Buildbot, necessary only when
 # using the OAUth functionality.
