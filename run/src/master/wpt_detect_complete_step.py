@@ -10,7 +10,7 @@ class WptDetectCompleteStep(steps.Trigger):
         super(WptDetectCompleteStep, self).__init__(*args, **kwargs)
 
     def allResultsPresent(self, step):
-        browser = self.build.properties.getProperty('browser')
+        browser_name = self.build.properties.getProperty('browser_name')
         revision = self.build.properties.getProperty('revision')
         total_chunks = self.build.properties.getProperty('total_chunks')
         chunk_results_dir = os.path.sep.join([
@@ -18,7 +18,7 @@ class WptDetectCompleteStep(steps.Trigger):
             '..',
             'chunk-results',
             revision,
-            browser
+            browser_name
         ])
         actual = set(os.listdir(chunk_results_dir))
         expected = set(
