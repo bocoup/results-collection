@@ -2,8 +2,8 @@ from buildbot.plugins import util
 
 @util.renderer
 def makeWptRunCommand(properties):
-    wpt_platform_id = None
-    browser_name = properties.getProperty('browser')
+    browser_id = None
+    browser_name = properties.getProperty('browser_name')
     command = [
         'echo',
         './wpt', 'run',
@@ -14,16 +14,16 @@ def makeWptRunCommand(properties):
     ]
 
     if browser_name in ('edge', 'safari'):
-        browser_version = properties.getProperty('browser_version')
-        wpt_platform_id = util.Interpolate(
-            'sauce:%(kw:browser_name)s:%(kw:browser_version)s',
-            browser_name=browser_name,
-            browser_version=browser_version
+        if browser_name is 'edge':
+            sauce_browser_name = 'MicrosoftEdge'
+        else:
+            sauce_browser_name = browser_name
+
+        browser_id = util.Interpolate(
+            'sauce:%(prop:sauce_browser_name)s:%(prop:browser_version)s',
         )
         sauce_platform_id = util.Interpolate(
-            '%(kw:browser_name)s %(kw:browser_version)s',
-            browser_name=browser_name,
-            browser_version=browser_version
+            '%(prop:os_name)s %(prop:os_version)s'
         )
 
         command.extend([
@@ -34,8 +34,8 @@ def makeWptRunCommand(properties):
             '--sauce-connect-binary', 'sc'
         ])
     else:
-        wpt_platform_id = browser_name
+        browser_id = browser_name
 
-    command.append(wpt_platform_id)
+    command.append(browser_id)
 
     return command
