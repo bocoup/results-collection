@@ -5,7 +5,6 @@ def makeWptRunCommand(properties):
     browser_id = None
     browser_name = properties.getProperty('browser_name')
     command = [
-        'echo',
         './wpt', 'run',
         '--no-restart-on-unexpected',
         '--install-fonts',
