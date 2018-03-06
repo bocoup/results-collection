@@ -26,3 +26,9 @@
     name: buildbot-worker
     enabled: true
     state: started
+
+- name: Install script for validating results
+  copy:
+    src: ../../../src/scripts/validate-wpt-results.py
+    dest: /usr/local/bin/validate-wpt-results.py
+    mode: 0755
