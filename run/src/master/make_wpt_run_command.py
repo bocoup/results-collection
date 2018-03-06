@@ -36,6 +36,8 @@ def makeWptRunCommand(properties):
             '--sauce-connect-binary', 'sc'
         ])
     else:
+        command = ['xvfb-run', '--auto-servernum'] + command
+
         browser_id = browser_name
 
     command.append(browser_id)
