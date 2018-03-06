@@ -8,6 +8,7 @@ def makeWptRunCommand(properties):
         'echo',
         './wpt', 'run',
         '--no-restart-on-unexpected',
+        '--install-fonts',
         '--log-wptreport', properties.getProperty('log_wptreport'),
         '--log-raw', properties.getProperty('log_raw'),
         '--this-chunk', properties.getProperty('this_chunk'),
