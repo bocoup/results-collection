@@ -3,7 +3,6 @@ localhost ansible_connection=local
 
 [buildbot-master:vars]
 oauth_github_org_pattern=*
-application_user=wptrunner
 oauth_github_client_id=b30e2d81816c5b6513f9
 oauth_github_client_secret=14cc1f81b3d033da37407fe4e2c000be105b9391
 
