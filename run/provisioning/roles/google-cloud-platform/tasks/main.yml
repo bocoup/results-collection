@@ -17,6 +17,16 @@
     dest: '/etc/apt/sources.list.d/google-cloud.list'
     line: deb http://packages.cloud.google.com/apt cloud-sdk-xenial main
     create: true
+  register: add_google_cloud_source
+
+- name: Update package repository
+  command: apt-get update
+  when: add_google_cloud_source.changed
+
+- name: Install system package
+  apt:
+    name:  google-cloud-sdk
+    state: present
 
 - name: ensure we have the latest google-sdk
   command: pip install --upgrade google-cloud
@@ -36,10 +46,16 @@
     group: '{{application_group}}'
     mode: 0400
 
-- name: Activate Google Cloud Platform service account credentials
+- name: Define Google Cloud Platform service account credentials
   lineinfile:
     path: /home/{{application_user}}/.bash_profile
     line: export GOOGLE_APPLICATION_CREDENTIALS=/home/{{application_user}}/google-cloud-platform-credentials.json
     create: true
     owner: '{{application_user}}'
     group: '{{application_group}}'
+
+- name: Activate Google Cloud Platform service account
+  command: |
+    sudo --login --user {{application_user}} \
+      gcloud auth activate-service-account \
+        --key-file /home/{{application_user}}/google-cloud-platform-credentials.json
