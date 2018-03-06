@@ -14,7 +14,7 @@ def makeWptRunCommand(properties):
         '--total-chunks', properties.getProperty('total_chunks')
     ]
 
-    if browser_name in ('edge', 'safari'):
+    if properties.getProperty('os_name') != 'linux':
         if browser_name is 'edge':
             sauce_browser_name = 'MicrosoftEdge'
         else:
