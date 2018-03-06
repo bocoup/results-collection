@@ -41,6 +41,12 @@ def makeWptRunCommand(properties):
 
         browser_id = browser_name
 
+    if browser_name == 'firefox':
+        # temporary fix to allow WebRTC tests to call getUserMedia
+        command.extend([
+            '--setpref', 'media.navigator.streams.fake=true'
+        ])
+
     command.append(browser_id)
 
     return command
