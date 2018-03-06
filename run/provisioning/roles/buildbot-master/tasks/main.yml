@@ -63,6 +63,8 @@
       value: '{{oauth_github_client_secret}}'
     - name: oauth_github_org_pattern
       value: '{{oauth_github_org_pattern}}'
+    - name: fqdn
+      value: '{{fqdn}}'
 
 # The "requests" module is a soft requirement of Buildbot, necessary only when
 # using the OAUth functionality.
