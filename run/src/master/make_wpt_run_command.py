@@ -9,6 +9,7 @@ def makeWptRunCommand(properties):
         './wpt', 'run',
         '--no-restart-on-unexpected',
         '--log-wptreport', properties.getProperty('log_wptreport'),
+        '--log-raw', properties.getProperty('log_raw'),
         '--this-chunk', properties.getProperty('this_chunk'),
         '--total-chunks', properties.getProperty('total_chunks')
     ]
