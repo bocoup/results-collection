@@ -7,7 +7,3 @@ sauce_labs_user: mattl
 sauce_labs_key: '{{vault_sauce_labs_key}}'
 
 google_cloud_secret: '{{vault_google_cloud_secret}}'
-
-oauth_github_client_id: '{{vault_oauth_github_client_id}}'
-oauth_github_client_secret: '{{vault_oauth_github_client_secret}}'
-oauth_github_org_pattern: ^(bocoup|w3c)$
