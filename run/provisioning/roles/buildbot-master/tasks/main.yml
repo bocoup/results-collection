@@ -37,18 +37,18 @@
   notify:
     - Restart "build master" service
 
-- name: Create directory to store secrets
+- name: Create directory to store configuration
   file:
-    path: '{{home_dir}}/master/secrets'
+    path: '{{home_dir}}/master/configuration'
     state: directory
     owner: '{{application_user}}'
     group: '{{application_group}}'
     mode: 0700
 
-- name: Insert secrets
+- name: Insert configuration values
   copy:
     content: '{{item.value}}'
-    dest: '{{home_dir}}/master/secrets/{{item.name}}'
+    dest: '{{home_dir}}/master/configuration/{{item.name}}'
     owner: '{{application_user}}'
     group: '{{application_group}}'
     mode: 0700
@@ -61,9 +61,6 @@
       value: '{{oauth_github_client_id}}'
     - name: oauth_github_client_secret
       value: '{{oauth_github_client_secret}}'
-    # The following value isn't sensitive in nature, but it is deployed to the
-    # build master as a "secret" in order to normalize handling of
-    # configuration data.
     - name: oauth_github_org_pattern
       value: '{{oauth_github_org_pattern}}'
 
