@@ -9,12 +9,12 @@
 
 - name: Install script for modifying system hosts file
   copy:
-    src: set-hosts.sh
-    dest: /usr/local/bin/set-hosts.sh
+    src: ../../../src/scripts/extend-hosts.py
+    dest: /usr/local/bin/extend-hosts.py
     mode: 0755
 
-# This allows workers to edit the hostsfile via `sudo set-hosts.sh`
+# This allows workers to edit the hostsfile via `sudo extend-hosts.py`
 - name: Allow application user to modify system hosts file
   lineinfile:
     dest: /etc/sudoers
-    line: '{{application_user}} ALL=(ALL) NOPASSWD: /usr/local/bin/set-hosts.sh'
+    line: '{{application_user}} ALL=(ALL) NOPASSWD: /usr/local/bin/extend-hosts.py'
