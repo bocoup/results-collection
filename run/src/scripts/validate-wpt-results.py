@@ -22,10 +22,16 @@ def main(log_wptreport, log_raw):
     unexpected_results = actual_results - expected_results
     missing_results = expected_results - actual_results
 
-    logger.info('%s unexpected results: %s' % (len(unexpected_results),
-                                               unexpected_results))
-    logger.info('%s missing results: %s' % (len(missing_results),
-                                            missing_results))
+    logger.info('Expected %s results' % len(expected_results))
+    logger.info('Found %s results' % len(actual_results))
+
+    logger.info('%s unexpected results' % len(unexpected_results))
+    for result in unexpected_results:
+        logger.info('- %s' % result)
+
+    logger.info('%s missing results' % len(missing_results))
+    for result in missing_results:
+        logger.info('- %s' % result)
 
     total_incorrect = len(unexpected_results) + len(missing_results)
     total_expected = len(expected_results)
