@@ -66,6 +66,17 @@
     url: https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
     dest: ~/downloads/
 
+- name: Extend hosts file with configuration to shunt Firefox requests
+  lineinfile:
+    dest: /etc/hosts
+    line: '{{item}}'
+  with_items:
+    - 0.0.0.0 *.cdn.mozilla.net
+    - 0.0.0.0 normandy.cdn.mozilla.net
+    - 0.0.0.0 tiles.services.mozilla.com
+    - 0.0.0.0 location.services.mozilla.com
+    - 0.0.0.0 *.services.mozilla.com
+
 - name: Install Mozilla Geckodriver
   unarchive:
     src: ~/downloads/geckodriver-v0.19.1-linux64.tar.gz
