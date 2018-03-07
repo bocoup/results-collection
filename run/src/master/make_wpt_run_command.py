@@ -15,7 +15,7 @@ def makeWptRunCommand(properties):
     ]
 
     if properties.getProperty('os_name') != 'linux':
-        if browser_name is 'edge':
+        if browser_name == 'edge':
             sauce_browser_name = 'MicrosoftEdge'
         else:
             sauce_browser_name = browser_name
