@@ -23,6 +23,9 @@ def main(raw_results_directory, browser_name, wpt_revision, bucket_name):
         for filename in os.listdir(raw_results_directory)
     ]
 
+    logger.info('Just kidding')
+    return
+
     summary = summarize(raw_results_files)
 
     temp_dir = tempfile.mkdtemp()

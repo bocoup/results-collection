@@ -15,6 +15,7 @@ class WptRunStep(steps.ShellCommand):
     @staticmethod
     @util.renderer
     def makeWptRunCommand(properties):
+        return ['true']
         browser_id = None
         browser_name = properties.getProperty('browser_name')
         command = [
