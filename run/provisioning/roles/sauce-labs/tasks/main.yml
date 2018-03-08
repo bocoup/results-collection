@@ -1,9 +1,21 @@
 ---
-- name: make sure we can open enough files
+# In Ubuntu 16.04, open file limits are set via two independent configuration
+# files.
+#
+# https://ro-che.info/articles/2017-03-26-increase-open-files-limit
+- name: Raise limit on number of open files (systemd settings)
   lineinfile: dest=/etc/systemd/system.conf
     regexp="DefaultLimitNOFILE"
     line="DefaultLimitNOFILE=65536"
     state=present
+
+- name: Raise limits on number of open files (PAM settings)
+  lineinfile:
+    dest: /etc/security/limits.conf
+    line: '{{item}}'
+  with_items:
+    - '* soft nofile 65536'
+    - '* hard nofile 65536'
 
 - name: Download Sauce Connect
   get_url:
