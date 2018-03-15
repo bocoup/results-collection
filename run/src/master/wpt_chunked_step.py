@@ -20,8 +20,6 @@ class WPTChunkedStep(steps.Trigger):
             unimportant = scheduler in self.unimportantSchedulerNames
 
             for platform in self.platforms:
-                use_sauce_labs = platform['os_name'] != 'linux'
-
                 for this_chunk in range(1, self.total_chunks + 1):
                     spec.append({
                         'sched_name': scheduler,
@@ -31,8 +29,7 @@ class WPTChunkedStep(steps.Trigger):
                             'browser_name': platform['browser_name'],
                             'browser_version': platform['browser_version'],
                             'os_name': platform['os_name'],
-                            'os_version': platform['os_version'],
-                            'use_sauce_labs': use_sauce_labs
+                            'os_version': platform['os_version']
                         },
                         'unimportant': unimportant
                     })

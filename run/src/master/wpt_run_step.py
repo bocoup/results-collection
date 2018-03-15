@@ -27,7 +27,7 @@ class WptRunStep(steps.ShellCommand):
             '--total-chunks', properties.getProperty('total_chunks')
         ]
 
-        if properties.getProperty('use_sauce_labs'):
+        if properties.getProperty('os_name') != 'linux':
             if browser_name == 'edge':
                 sauce_browser_name = 'MicrosoftEdge'
             else:
