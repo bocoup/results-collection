@@ -26,7 +26,8 @@ class WPTChunkedStep(steps.Trigger):
                         'browser_name': self.platform['browser_name'],
                         'browser_version': self.platform['browser_version'],
                         'os_name': self.platform['os_name'],
-                        'os_version': self.platform['os_version']
+                        'os_version': self.platform['os_version'],
+                        'use_sauce_labs': self.platform.get('sauce', False)
                     },
                     'unimportant': unimportant
                 })
