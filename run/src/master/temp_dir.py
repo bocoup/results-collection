@@ -1,7 +1,10 @@
+import os
+
 from buildbot.plugins import steps, util
 
 def prefix(filename):
-    return util.Interpolate('%(prop:temporary_directory)s/' + filename)
+    pattern = os.path.join('%(prop:temporary_directory)s', filename)
+    return util.Interpolate(pattern)
 
 class CreateStep(steps.SetPropertyFromCommand):
     '''Platform-agnostic Buildbot step for creating a temporary filesystem'''

@@ -18,7 +18,7 @@ class WptRunStep(steps.ShellCommand):
         browser_id = None
         browser_name = properties.getProperty('browser_name')
         command = [
-            './wpt', 'run',
+            'python', 'wpt', 'run',
             '--no-restart-on-unexpected',
             '--install-fonts',
             '--log-wptreport', properties.getProperty('log_wptreport'),
