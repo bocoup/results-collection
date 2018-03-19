@@ -1,4 +1,4 @@
-from buildbot.plugins import steps
+from buildbot.plugins import steps, util
 
 class WPTChunkedStep(steps.Trigger):
     def __init__(self, platform, total_chunks, *args, **kwargs):
@@ -13,6 +13,7 @@ class WPTChunkedStep(steps.Trigger):
 
     def getSchedulersAndProperties(self):
         spec = []
+        revision_date = self.build.properties.getProperty('revision_date')
 
         for scheduler in self.schedulerNames:
             unimportant = scheduler in self.unimportantSchedulerNames
@@ -27,7 +28,8 @@ class WPTChunkedStep(steps.Trigger):
                         'browser_version': self.platform['browser_version'],
                         'os_name': self.platform['os_name'],
                         'os_version': self.platform['os_version'],
-                        'use_sauce_labs': self.platform.get('sauce', False)
+                        'use_sauce_labs': self.platform.get('sauce', False),
+                        'revision_date': revision_date
                     },
                     'unimportant': unimportant
                 })

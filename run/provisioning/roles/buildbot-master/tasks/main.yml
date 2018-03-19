@@ -78,6 +78,10 @@
       value: '{{fqdn}}'
     - name: db_mount_point
       value: '{{db_mount_point}}'
+    - name: wptd_notify_url
+      value: '{{wptd_notify_url}}'
+    - name: wptd_notify_secret
+      value: '{{wptd_notify_secret}}'
 
 # The "requests" module is a soft requirement of Buildbot, necessary only when
 # using the OAUth functionality.

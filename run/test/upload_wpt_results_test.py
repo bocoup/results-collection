@@ -1,3 +1,4 @@
+import BaseHTTPServer
 import gzip
 import json
 import os
@@ -5,6 +6,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -14,6 +16,22 @@ gsutil_stub_content = os.path.sep.join([gsutil_stub_dir, 'content-to-upload'])
 upload_bin = os.path.sep.join(
     [here, '..', 'src', 'scripts', 'upload-wpt-results.py']
 )
+
+
+class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
+    def log_message(*argv):
+        pass
+
+    def do_POST(self):
+        body_length = int(self.headers['Content-Length'])
+        self.server.requests.append({
+            'path': self.path,
+            'body': str(self.rfile.read(body_length))
+        })
+        self.send_response(self.server.status_code)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
 
 def make_results():
     return {
@@ -48,6 +66,7 @@ def make_results():
 class TestUploadWptResults(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
+        self.server = None
 
         # gsutil "stub" output files and directories will only be present if
         # the tests were run previously
@@ -67,7 +86,12 @@ class TestUploadWptResults(unittest.TestCase):
         except OSError:
             pass
 
-    def upload(self, browser_name, results_dir, results,
+        if self.server:
+            self.server.shutdown()
+            self.server.server_close()
+            self.server_thread.join()
+
+    def upload(self, browser_name, browser_version, results_dir, results, port,
                gsutil_return_code = 0):
         env = dict(os.environ)
         env['PATH'] = gsutil_stub_dir + os.pathsep + os.environ['PATH']
@@ -79,8 +103,15 @@ class TestUploadWptResults(unittest.TestCase):
 
         proc = subprocess.Popen([
             upload_bin, '--raw-results-directory', results_dir,
-            '--browser-name', browser_name, '--wpt-revision', '123456',
-            '--bucket-name', 'wpt-test'
+            '--browser-name', browser_name,
+            '--browser-version', browser_version,
+            '--os-name', 'linux',
+            '--os-version', '4.0',
+            '--wpt-revision', '123456',
+            '--wpt-revision-date', '2018-03-19T17:54:32-04:00',
+            '--bucket-name', 'wpt-test',
+            '--notify-url', 'http://localhost:%s' % port,
+            '--notify-secret', 'fake-secret'
         ], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         stdout, stderr = proc.communicate()
@@ -94,10 +125,25 @@ class TestUploadWptResults(unittest.TestCase):
             with gzip.open(path) as handle:
                 self.assertEqual(data[filename], json.loads(handle.read()))
 
+    def start_server(self, port):
+        self.server = BaseHTTPServer.HTTPServer(('', port), Handler)
+        self.server.status_code = 201
+        self.server.requests = []
+
+        def target(server):
+            server.serve_forever()
+
+        self.server_thread = threading.Thread(target=target, args=(self.server,))
+
+        self.server_thread.start()
+
     def test_basic_firefox(self):
+        self.start_server(9801)
         returncode, stdout, stderr = self.upload('firefox',
+                                                 '2.0',
                                                  self.temp_dir,
-                                                 make_results())
+                                                 make_results(),
+                                                 9801)
 
         self.assertEqual(returncode, 0, stderr)
 
@@ -126,11 +172,26 @@ class TestUploadWptResults(unittest.TestCase):
                 'subtests': []
             }
         })
+        self.assertEqual(len(self.server.requests), 1)
+        request = self.server.requests[0]
+        self.assertEqual(request['path'], '/?secret=fake-secret')
+        self.assertEqual(json.loads(request['body']), {
+            'browser_name': 'firefox',
+            'browser_version': '2.0',
+            'commit_date': '2018-03-19T17:54:32-04:00',
+            'os_name': 'linux',
+            'os_version': '4.0',
+            'results_url': 'gs://wptd2/123456/firefox-summary.json.gz',
+            'revision': '123456'
+        })
 
     def test_basic_chrome(self):
+        self.start_server(9802)
         returncode, stdout, stderr = self.upload('chrome',
+                                                 '4.3.2',
                                                  self.temp_dir,
-                                                 make_results())
+                                                 make_results(),
+                                                 port=9802)
 
         self.assertEqual(returncode, 0, stderr)
 
@@ -159,26 +220,67 @@ class TestUploadWptResults(unittest.TestCase):
                 'subtests': []
             }
         })
+        self.assertEqual(len(self.server.requests), 1)
+        request = self.server.requests[0]
+        self.assertEqual(request['path'], '/?secret=fake-secret')
+        self.assertEqual(json.loads(request['body']), {
+            'browser_name': 'chrome',
+            'browser_version': '4.3.2',
+            'commit_date': '2018-03-19T17:54:32-04:00',
+            'os_name': 'linux',
+            'os_version': '4.0',
+            'results_url': 'gs://wptd2/123456/chrome-summary.json.gz',
+            'revision': '123456'
+        })
 
-    def test_failed_gsutil(self):
+    def test_failed_request(self):
+        self.start_server(9804)
+        self.server.status_code = 500
         returncode, stdout, stderr = self.upload('chrome',
+                                                 '4.3.2',
                                                  self.temp_dir,
                                                  make_results(),
+                                                 port=9804)
+
+        self.assertNotEqual(returncode, 0, stdout)
+        self.assertEqual(len(self.server.requests), 1)
+
+    def test_no_server(self):
+        returncode, stdout, stderr = self.upload('chrome',
+                                                 '4.3.2',
+                                                 self.temp_dir,
+                                                 make_results(),
+                                                 port=9802)
+
+        self.assertNotEqual(returncode, 0, stdout)
+
+    def test_failed_gsutil(self):
+        self.start_server(9801)
+        returncode, stdout, stderr = self.upload('chrome',
+                                                 '3.2.1',
+                                                 self.temp_dir,
+                                                 make_results(),
+                                                 port=9801,
                                                  gsutil_return_code = 1)
 
         self.assertEqual(returncode, 1, stdout)
+        self.assertEqual(len(self.server.requests), 0)
 
     def test_duplicated_results(self):
+        self.start_server(9802)
         duplicated_results = make_results()
         duplicated_results['2_of_2.json']['results'].append(
             duplicated_results['1_of_2.json']['results'][0]
         )
         returncode, stdout, stderr = self.upload('firefox',
+                                                 '1.0.1',
                                                  self.temp_dir,
-                                                 duplicated_results)
+                                                 duplicated_results,
+                                                 port=9801)
 
         self.assertEqual(returncode, 1, stdout)
         self.assertFalse(os.access(gsutil_stub_content, os.R_OK))
+        self.assertEqual(len(self.server.requests), 0)
 
 
 if __name__ == '__main__':
