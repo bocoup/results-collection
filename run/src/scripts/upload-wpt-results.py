@@ -49,6 +49,8 @@ def main(raw_results_directory, browser_name, wpt_revision, bucket_name):
 
         logger.info('Upload successful.')
 
+        print '%s/%s' % (upload_location, summary_file_name)
+
     finally:
         shutil.rmtree(temp_dir)
 

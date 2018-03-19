@@ -6,4 +6,6 @@
 sauce_labs_user: mattl
 sauce_labs_key: '{{vault_sauce_labs_key}}'
 
+wptd_upload_url: https://wptdashboard.appspot.com/api/run
+
 google_cloud_secret: '{{vault_google_cloud_secret}}'
