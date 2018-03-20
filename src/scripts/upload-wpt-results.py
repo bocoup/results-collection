@@ -128,6 +128,10 @@ def each_result(raw_results_files):
 
 
 def upload(dir_name, location):
+    print 'Just kidding %s %s' % (dir_name, location)
+    print os.listdir(dir_name)
+    return
+
     return_code = subprocess.check_call([
         'gsutil', '-m', '-h', 'Content-Encoding:gzip', 'rsync', '-r', dir_name,
         location
@@ -212,6 +216,9 @@ def expand_os_version(name, version):
 
 
 def notify(url, secret, payload):
+    print 'just kidding %s %s' % (url, json.dumps(payload))
+    return (201, 'okay')
+
     response = requests.post(url,
                              params={'secret': secret},
                              data=json.dumps(payload))
