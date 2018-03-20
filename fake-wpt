@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+import argparse
+import json
+import os
+import time
+
+def make_hosts_file(args):
+    print '127.0.0.1 zombo.com'
+
+def run(args):
+    tests = [
+        '/fake-test-for-chunk-%s-of-%s.html' % (args.this_chunk, args.total_chunks)
+    ]
+
+    raw_log = {
+        'action': 'suite_start',
+        'tests': {
+            'default': tests
+        }
+    }
+    wpt_report = {
+        'results': [
+            {
+                'test': test_file_name,
+                'status': 'OK',
+                'subtests': []
+            } for test_file_name in tests
+        ]
+    }
+
+    with open(args.log_raw, 'w') as handle:
+        handle.write(json.dumps(raw_log))
+
+    with open(args.log_wptreport, 'w') as handle:
+        handle.write(json.dumps(wpt_report))
+
+    time.sleep(5)
+
+parser = argparse.ArgumentParser()
+subparsers = parser.add_subparsers()
+
+hosts_parser = subparsers.add_parser('make-hosts-file')
+hosts_parser.set_defaults(func=make_hosts_file)
+
+run_parser = subparsers.add_parser('run')
+run_parser.add_argument('--log-wptreport', action='store')
+run_parser.add_argument('--log-raw', action='store')
+run_parser.add_argument('--this-chunk', action='store')
+run_parser.add_argument('--total-chunks', action='store')
+run_parser.set_defaults(func=run)
+
+if __name__ == '__main__':
+    args = parser.parse_known_args()
+    args[0].func(args[0])
