@@ -8,6 +8,9 @@ import argparse
 import re
 import subprocess
 
+print '34.0'
+import sys
+sys.exit(0)
 
 def firefox(binary):
     '''Determine the version of a provided Mozilla Firefox binary, e.g.:
