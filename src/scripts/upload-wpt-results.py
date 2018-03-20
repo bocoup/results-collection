@@ -61,6 +61,10 @@ def main(raw_results_directory, product, browser_version, os_name, os_version,
                 consolidate(raw_results_files, platform_override), handle
             )
 
+        logger.info('Not actually uploading')
+        with open(filename, 'r') as handle:
+            logger.info(handle.read())
+        return
         response = requests.post(
             url,
             auth=(user_name, secret),
