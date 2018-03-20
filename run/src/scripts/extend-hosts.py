@@ -9,6 +9,7 @@ import sys
 
 sigil = ' # inserted by extend-hosts.py script'
 
+
 def main(filename, stream):
     '''Insert newline-separated content into a file, replacing any content that
     was previously inserted using this script. Assumes that the "hash"

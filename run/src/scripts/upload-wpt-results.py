@@ -81,6 +81,7 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
 
     assert status_code == 201
 
+
 def each_result(raw_results_files):
     for filename in raw_results_files:
         with open(filename) as handle:

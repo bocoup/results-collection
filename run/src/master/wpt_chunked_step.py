@@ -4,6 +4,7 @@
 
 from buildbot.plugins import steps, util
 
+
 class WPTChunkedStep(steps.Trigger):
     def __init__(self, platform, total_chunks, *args, **kwargs):
         self.platform = platform

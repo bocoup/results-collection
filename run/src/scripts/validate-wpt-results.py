@@ -10,6 +10,7 @@ import logging
 
 THRESHOLD = 0.02
 
+
 def main(log_wptreport, log_raw):
     '''Verify that the test results for an trial of the Web Platform Tests (as
     described by the WPT CLI's `--log-wptreport` feature) includes information
@@ -84,6 +85,7 @@ def get_actual_results(log_wptreport):
         assert isinstance(data.get('results'), list)
 
         return set([result['test'] for result in data.get('results')])
+
 
 parser = argparse.ArgumentParser(description=main.__doc__)
 parser.add_argument('--log-wptreport', required=True)

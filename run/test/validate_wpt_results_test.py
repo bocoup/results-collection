@@ -14,6 +14,7 @@ validate = os.path.sep.join([
     here, '..', 'src', 'scripts', 'validate-wpt-results.py'
 ])
 
+
 def make_results(count):
     results = {'results': []}
     test_filenames = []
@@ -36,6 +37,7 @@ def make_results(count):
         })
 
     return results, test_filenames
+
 
 class ValidateWptResults(unittest.TestCase):
     def setUp(self):

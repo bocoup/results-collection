@@ -67,6 +67,7 @@ def make_results():
         }
     }
 
+
 class TestUploadWptResults(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
@@ -96,7 +97,7 @@ class TestUploadWptResults(unittest.TestCase):
             self.server_thread.join()
 
     def upload(self, browser_name, browser_version, results_dir, results, port,
-               gsutil_return_code = 0):
+               gsutil_return_code=0):
         env = dict(os.environ)
         env['PATH'] = gsutil_stub_dir + os.pathsep + os.environ['PATH']
         env['GSUTIL_RETURN_CODE'] = str(gsutil_return_code)
@@ -137,7 +138,9 @@ class TestUploadWptResults(unittest.TestCase):
         def target(server):
             server.serve_forever()
 
-        self.server_thread = threading.Thread(target=target, args=(self.server,))
+        self.server_thread = threading.Thread(
+            target=target, args=(self.server,)
+        )
 
         self.server_thread.start()
 
@@ -265,7 +268,7 @@ class TestUploadWptResults(unittest.TestCase):
                                                  self.temp_dir,
                                                  make_results(),
                                                  port=9801,
-                                                 gsutil_return_code = 1)
+                                                 gsutil_return_code=1)
 
         self.assertEqual(returncode, 1, stdout)
         self.assertEqual(len(self.server.requests), 0)

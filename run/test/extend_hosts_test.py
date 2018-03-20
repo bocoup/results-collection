@@ -11,6 +11,7 @@ import unittest
 here = os.path.dirname(os.path.abspath(__file__))
 extend = os.path.sep.join([here, '..', 'src', 'scripts', 'extend-hosts.py'])
 
+
 def hasLine(filename, content):
     with open(filename) as handle:
         for line in handle:
@@ -18,6 +19,7 @@ def hasLine(filename, content):
                 return True
 
     return False
+
 
 class TestExtendHosts(unittest.TestCase):
     def setUp(self):

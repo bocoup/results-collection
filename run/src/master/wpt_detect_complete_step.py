@@ -7,6 +7,7 @@ import os
 from buildbot.plugins import steps
 from twisted.python import log
 
+
 class WptDetectCompleteStep(steps.Trigger):
     def __init__(self, *args, **kwargs):
         kwargs['doStepIf'] = self.allResultsPresent
@@ -26,7 +27,10 @@ class WptDetectCompleteStep(steps.Trigger):
         ])
         actual = set(os.listdir(chunk_results_dir))
         expected = set(
-          ['%s_of_%s.json' % (idx, total_chunks) for idx in range(1, total_chunks + 1)]
+            [
+                '%s_of_%s.json' % (idx, total_chunks)
+                for idx in range(1, total_chunks + 1)
+            ]
         )
         missing = expected - actual
 

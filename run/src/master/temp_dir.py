@@ -4,8 +4,10 @@
 
 from buildbot.plugins import steps, util
 
+
 def prefix(filename):
     return util.Interpolate('%(prop:temporary_directory)s/' + filename)
+
 
 class CreateStep(steps.SetPropertyFromCommand):
     '''Platform-agnostic Buildbot step for creating a temporary filesystem'''
@@ -17,6 +19,7 @@ class CreateStep(steps.SetPropertyFromCommand):
         ]
 
         super(CreateStep, self).__init__(*args, **kwargs)
+
 
 class RemoveStep(steps.ShellCommand):
     '''Platform-agnostic Buildbot step for deleting a temporary filesystem

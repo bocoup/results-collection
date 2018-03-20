@@ -5,9 +5,11 @@
 from buildbot.plugins import steps
 from buildbot.plugins import util
 
+
 class WptRunStep(steps.ShellCommand):
-    name=util.Interpolate(
-        'WPT Run (%(prop:browser_name)s, %(prop:this_chunk)s of %(prop:total_chunks)s)'
+    name = util.Interpolate(
+        'WPT Run ' +
+        '(%(prop:browser_name)s, %(prop:this_chunk)s of %(prop:total_chunks)s)'
     )
 
     def __init__(self, *args, **kwargs):
