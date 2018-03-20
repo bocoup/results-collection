@@ -62,6 +62,13 @@ class WptRunStep(steps.ShellCommand):
             command.extend([
                 '--setpref', 'media.navigator.streams.fake=true'
             ])
+        elif browser_name == 'chrome':
+            # This is intended as a temporary fix to allow the webrtc tests in
+            # Chrome to call getUserMedia without failing out.
+            command.extend([
+                '--binary-arg=--use-fake-ui-for-media-stream',
+                '--binary-arg=--use-fake-device-for-media-stream'
+            ])
 
         command.append(browser_id)
 
