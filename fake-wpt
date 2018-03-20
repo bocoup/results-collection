@@ -1,0 +1,112 @@
+#!/usr/bin/env python
+
+import argparse
+import json
+import os
+import sys
+import time
+
+class FileOrStreamCtx(object):
+    def __init__(self, name, mode):
+        self.name = name
+        self.mode = mode
+
+    def __enter__(self):
+        if self.name == '-':
+            return sys.stdout
+
+        self.handle = open(self.name, self.mode)
+        return self.handle
+
+    def __exit__(self, *args):
+        if self.name == '-':
+            return
+
+        self.handle.__exit__(*args)
+
+
+def make_hosts_file(args):
+    print '127.0.0.1 zombo.com'
+
+def run(args):
+    tests = [
+        '/fake-test-for-chunk-%s-of-%s.html' % (args.this_chunk, args.total_chunks)
+    ]
+
+    raw_log = {
+        'action': 'suite_start',
+        'tests': {
+            'default': tests
+        }
+    }
+    now = int(time.time() * 1000)
+    wpt_report = {
+        'time_start': now - 1234,
+        'time_end': now,
+        'run_info': {
+            'bits': 64,
+            'browser_version': '61.0a1',
+            'debug': False,
+            'e10s': True,
+            'has_sandbox': True,
+            'headless': False,
+            'linux_distro': 'Ubuntu',
+            'os': 'linux',
+            'os_version': '16.04',
+            'processor': 'x86_64',
+            'product': 'firefox',
+            'revision': '503a4f322c662853f7956700830b37cf3f84390e',
+            'stylo': False,
+            'version': 'Ubuntu 16.04'
+        },
+        'results': [
+            {
+                'test': test_file_name,
+                'status': 'OK',
+                'subtests': []
+            } for test_file_name in tests
+        ]
+    }
+
+    with FileOrStreamCtx(args.log_raw, 'w') as handle:
+        handle.write(json.dumps(raw_log))
+
+    with FileOrStreamCtx(args.log_wptreport, 'w') as handle:
+        handle.write(json.dumps(wpt_report))
+
+    with FileOrStreamCtx(args.log_tbpl, 'w') as handle:
+        handle.write('This is some TBPL-formatted logging\nWoooo\n')
+
+    if args.sauce_tunnel_id:
+        with open('/tmp/sc-%s.log' % args.sauce_tunnel_id, 'a') as handle:
+            handle.write('This is some output\n')
+            handle.write('From Sauce Connect\n')
+            handle.write('Tunnel id: %s\n' % args.sauce_tunnel_id)
+
+    time.sleep(5)
+
+    with FileOrStreamCtx(args.log_tbpl, 'a') as handle:
+        handle.write('All done.\n')
+
+    if args.sauce_tunnel_id:
+        with open('/tmp/sc-%s.log' % args.sauce_tunnel_id, 'a') as handle:
+            handle.write('End of output for Sauce Connect')
+
+parser = argparse.ArgumentParser()
+subparsers = parser.add_subparsers()
+
+hosts_parser = subparsers.add_parser('make-hosts-file')
+hosts_parser.set_defaults(func=make_hosts_file)
+
+run_parser = subparsers.add_parser('run')
+run_parser.add_argument('--log-wptreport', action='store')
+run_parser.add_argument('--log-raw', action='store')
+run_parser.add_argument('--log-tbpl', action='store')
+run_parser.add_argument('--this-chunk', action='store')
+run_parser.add_argument('--total-chunks', action='store')
+run_parser.add_argument('--sauce-tunnel-id', action='store')
+run_parser.set_defaults(func=run)
+
+if __name__ == '__main__':
+    args = parser.parse_known_args()
+    args[0].func(args[0])
