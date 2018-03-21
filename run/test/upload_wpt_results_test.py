@@ -108,6 +108,8 @@ class TestUploadWptResults(unittest.TestCase):
 
         proc = subprocess.Popen([
             upload_bin, '--raw-results-directory', results_dir,
+            '--platform-id', '%s-%s-%s-%s' % (browser_name, browser_version,
+                                              os_name, os_version),
             '--browser-name', browser_name,
             '--browser-version', browser_version,
             '--os-name', os_name,
@@ -157,12 +159,12 @@ class TestUploadWptResults(unittest.TestCase):
         self.assertEqual(returncode, 0, stderr)
 
         self.assertJsonFiles(gsutil_stub_content, {
-            'firefox-summary.json.gz': {
+            'firefox-2.0-linux-4.0-summary.json.gz': {
                 '/js/bitwise-and.html': [1, 3],
                 '/js/bitwise-or-2.html': [1, 1],
                 '/js/bitwise-or.html': [1, 1]
             },
-            'firefox/js/bitwise-and.html': {
+            'firefox-2.0-linux-4.0/js/bitwise-and.html': {
                 'test': '/js/bitwise-and.html',
                 'status': 'OK',
                 'subtests': [
@@ -170,12 +172,12 @@ class TestUploadWptResults(unittest.TestCase):
                     {u'message': 'bad', 'name': 'second', 'status': 'FAIL'}
                 ]
             },
-            'firefox/js/bitwise-or.html': {
+            'firefox-2.0-linux-4.0/js/bitwise-or.html': {
                 'test': '/js/bitwise-or.html',
                 'status': 'OK',
                 'subtests': []
             },
-            'firefox/js/bitwise-or-2.html':  {
+            'firefox-2.0-linux-4.0/js/bitwise-or-2.html':  {
                 'test': '/js/bitwise-or-2.html',
                 'status': u'OK',
                 'subtests': []
@@ -191,7 +193,8 @@ class TestUploadWptResults(unittest.TestCase):
             'os_name': 'linux',
             'os_version': '4.0',
             'results_url': 'https://storage.googleapis.com/' +
-                               'wpt-test/1234567890/firefox-summary.json.gz',
+                               'wpt-test/1234567890/' +
+                               'firefox-2.0-linux-4.0-summary.json.gz',
             'revision': '1234567890'
         })
 
@@ -208,12 +211,12 @@ class TestUploadWptResults(unittest.TestCase):
         self.assertEqual(returncode, 0, stderr)
 
         self.assertJsonFiles(gsutil_stub_content, {
-            'chrome-summary.json.gz': {
+            'chrome-4.3.2-macos-10.5-summary.json.gz': {
                 '/js/bitwise-and.html': [1, 3],
                 '/js/bitwise-or-2.html': [1, 1],
                 '/js/bitwise-or.html': [1, 1]
             },
-            'chrome/js/bitwise-and.html': {
+            'chrome-4.3.2-macos-10.5/js/bitwise-and.html': {
                 'test': '/js/bitwise-and.html',
                 'status': 'OK',
                 'subtests': [
@@ -221,12 +224,12 @@ class TestUploadWptResults(unittest.TestCase):
                     {u'message': 'bad', 'name': 'second', 'status': 'FAIL'}
                 ]
             },
-            'chrome/js/bitwise-or.html': {
+            'chrome-4.3.2-macos-10.5/js/bitwise-or.html': {
                 'test': '/js/bitwise-or.html',
                 'status': 'OK',
                 'subtests': []
             },
-            'chrome/js/bitwise-or-2.html':  {
+            'chrome-4.3.2-macos-10.5/js/bitwise-or-2.html':  {
                 'test': '/js/bitwise-or-2.html',
                 'status': u'OK',
                 'subtests': []
@@ -242,7 +245,8 @@ class TestUploadWptResults(unittest.TestCase):
             'os_name': 'macos',
             'os_version': '10.5',
             'results_url': 'https://storage.googleapis.com/' +
-                               'wpt-test/1234567890/chrome-summary.json.gz',
+                               'wpt-test/1234567890/' +
+                               'chrome-4.3.2-macos-10.5-summary.json.gz',
             'revision': '1234567890'
         })
 

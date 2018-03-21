@@ -6,7 +6,8 @@ from buildbot.plugins import steps, util
 
 
 class WPTChunkedStep(steps.Trigger):
-    def __init__(self, platform, total_chunks, *args, **kwargs):
+    def __init__(self, platform_id, platform, total_chunks, *args, **kwargs):
+        self.platform_id = platform_id
         self.platform = platform
         self.total_chunks = total_chunks
 
@@ -29,6 +30,7 @@ class WPTChunkedStep(steps.Trigger):
                     'props_to_set': {
                         'this_chunk': this_chunk,
                         'total_chunks': self.total_chunks,
+                        'platform_id': self.platform_id,
                         'browser_name': self.platform['browser_name'],
                         'browser_version': self.platform['browser_version'],
                         'os_name': self.platform['os_name'],
