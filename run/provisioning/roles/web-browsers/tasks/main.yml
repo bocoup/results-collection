@@ -39,8 +39,13 @@
     - curl
     - dtrx
     - emacs-nox
+    # In a future iteration of this project, the appropriate version of the
+    # Mozilla Firefox browser will be installed as part of the testing
+    # procedure.
     - firefox
     - git
+    # In a future iteration of this project, the appropriate version of the
+    # Google Chrome browser will be installed as part of the testing procedure.
     - google-chrome-stable
     - htop
     - libnss3-tools
