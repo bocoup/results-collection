@@ -35,6 +35,11 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
 
     os_version = expand_os_version(os_name, os_version)
 
+    # The current implementation of https://wpt.fyi does not render complete
+    # SHA sums gracefully. Truncate the value in order to satisy the needs of
+    # the interface.
+    wpt_revision = wpt_revision[:10]
+
     summary = summarize(raw_results_files)
 
     temp_dir = tempfile.mkdtemp()
@@ -53,11 +58,13 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
         for test_filename, raw_result in each_result(raw_results_files):
             write_gzip_json([full_results_dir, test_filename], raw_result)
 
-        upload_location = 'gs://%s/%s' % (bucket_name, wpt_revision)
+        upload_url = 'gs://%s/%s' % (bucket_name, wpt_revision)
+        download_url = 'https://storage.googleapis.com/%s/%s' % (
+            bucket_name, wpt_revision)
 
-        logger.info('Uploading results to %s', upload_location)
+        logger.info('Uploading results to %s', upload_url)
 
-        upload(temp_dir, upload_location)
+        upload(temp_dir, upload_url)
 
         logger.info('Upload successful.')
 
@@ -76,7 +83,7 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
             'os_version': os_version,
             'revision': wpt_revision,
             'commit_date': wpt_revision_date,
-            'results_url': '%s/%s' % (upload_location, summary_file_name)
+            'results_url': '%s/%s' % (download_url, summary_file_name)
         }
     )
 

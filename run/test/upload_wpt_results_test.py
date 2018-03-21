@@ -112,7 +112,7 @@ class TestUploadWptResults(unittest.TestCase):
             '--browser-version', browser_version,
             '--os-name', os_name,
             '--os-version', os_version,
-            '--wpt-revision', '123456',
+            '--wpt-revision', '1234567890abcdef',
             '--wpt-revision-date', '2018-03-19T17:54:32-04:00',
             '--bucket-name', 'wpt-test',
             '--notify-url', 'http://localhost:%s' % port,
@@ -190,8 +190,9 @@ class TestUploadWptResults(unittest.TestCase):
             'commit_date': '2018-03-19T17:54:32-04:00',
             'os_name': 'linux',
             'os_version': '4.0',
-            'results_url': 'gs://wpt-test/123456/firefox-summary.json.gz',
-            'revision': '123456'
+            'results_url': 'https://storage.googleapis.com/' +
+                               'wpt-test/1234567890/firefox-summary.json.gz',
+            'revision': '1234567890'
         })
 
     def test_basic_chrome(self):
@@ -240,8 +241,9 @@ class TestUploadWptResults(unittest.TestCase):
             'commit_date': '2018-03-19T17:54:32-04:00',
             'os_name': 'macos',
             'os_version': '10.5',
-            'results_url': 'gs://wpt-test/123456/chrome-summary.json.gz',
-            'revision': '123456'
+            'results_url': 'https://storage.googleapis.com/' +
+                               'wpt-test/1234567890/chrome-summary.json.gz',
+            'revision': '1234567890'
         })
 
     def test_expand_foreign_platform(self):
