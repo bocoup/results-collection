@@ -49,7 +49,7 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
         for test_filename, raw_result in each_result(raw_results_files):
             write_gzip_json([full_results_dir, test_filename], raw_result)
 
-        upload_location = 'gs://wptd2/%s' % wpt_revision
+        upload_location = 'gs://%s/%s' % (bucket_name, wpt_revision)
 
         logger.info('Uploading results to %s', upload_location)
 

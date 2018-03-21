@@ -188,7 +188,7 @@ class TestUploadWptResults(unittest.TestCase):
             'commit_date': '2018-03-19T17:54:32-04:00',
             'os_name': 'linux',
             'os_version': '4.0',
-            'results_url': 'gs://wptd2/123456/firefox-summary.json.gz',
+            'results_url': 'gs://wpt-test/123456/firefox-summary.json.gz',
             'revision': '123456'
         })
 
@@ -236,7 +236,7 @@ class TestUploadWptResults(unittest.TestCase):
             'commit_date': '2018-03-19T17:54:32-04:00',
             'os_name': 'linux',
             'os_version': '4.0',
-            'results_url': 'gs://wptd2/123456/chrome-summary.json.gz',
+            'results_url': 'gs://wpt-test/123456/chrome-summary.json.gz',
             'revision': '123456'
         })
 
