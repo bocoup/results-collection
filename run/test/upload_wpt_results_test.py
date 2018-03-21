@@ -96,8 +96,8 @@ class TestUploadWptResults(unittest.TestCase):
             self.server.server_close()
             self.server_thread.join()
 
-    def upload(self, browser_name, browser_version, results_dir, results, port,
-               gsutil_return_code=0):
+    def upload(self, browser_name, browser_version, os_name, os_version,
+               results_dir, results, port, gsutil_return_code=0):
         env = dict(os.environ)
         env['PATH'] = gsutil_stub_dir + os.pathsep + os.environ['PATH']
         env['GSUTIL_RETURN_CODE'] = str(gsutil_return_code)
@@ -110,8 +110,8 @@ class TestUploadWptResults(unittest.TestCase):
             upload_bin, '--raw-results-directory', results_dir,
             '--browser-name', browser_name,
             '--browser-version', browser_version,
-            '--os-name', 'linux',
-            '--os-version', '4.0',
+            '--os-name', os_name,
+            '--os-version', os_version,
             '--wpt-revision', '123456',
             '--wpt-revision-date', '2018-03-19T17:54:32-04:00',
             '--bucket-name', 'wpt-test',
@@ -148,6 +148,8 @@ class TestUploadWptResults(unittest.TestCase):
         self.start_server(9801)
         returncode, stdout, stderr = self.upload('firefox',
                                                  '2.0',
+                                                 'linux',
+                                                 '4.0',
                                                  self.temp_dir,
                                                  make_results(),
                                                  9801)
@@ -196,6 +198,8 @@ class TestUploadWptResults(unittest.TestCase):
         self.start_server(9802)
         returncode, stdout, stderr = self.upload('chrome',
                                                  '4.3.2',
+                                                 'macos',
+                                                 '10.5',
                                                  self.temp_dir,
                                                  make_results(),
                                                  port=9802)
@@ -234,17 +238,32 @@ class TestUploadWptResults(unittest.TestCase):
             'browser_name': 'chrome',
             'browser_version': '4.3.2',
             'commit_date': '2018-03-19T17:54:32-04:00',
-            'os_name': 'linux',
-            'os_version': '4.0',
+            'os_name': 'macos',
+            'os_version': '10.5',
             'results_url': 'gs://wpt-test/123456/chrome-summary.json.gz',
             'revision': '123456'
         })
+
+    def test_expand_foreign_platform(self):
+        self.start_server(9802)
+        returncode, stdout, stderr = self.upload('chrome',
+                                                 '4.3.2',
+                                                 'beos',
+                                                 '*',
+                                                 self.temp_dir,
+                                                 make_results(),
+                                                 port=9802)
+
+        self.assertNotEqual(returncode, 0, stdout)
+        self.assertEqual(len(self.server.requests), 0)
 
     def test_failed_request(self):
         self.start_server(9804)
         self.server.status_code = 500
         returncode, stdout, stderr = self.upload('chrome',
                                                  '4.3.2',
+                                                 'linux',
+                                                 '4.0',
                                                  self.temp_dir,
                                                  make_results(),
                                                  port=9804)
@@ -255,6 +274,8 @@ class TestUploadWptResults(unittest.TestCase):
     def test_no_server(self):
         returncode, stdout, stderr = self.upload('chrome',
                                                  '4.3.2',
+                                                 'linux',
+                                                 '4.0',
                                                  self.temp_dir,
                                                  make_results(),
                                                  port=9802)
@@ -265,6 +286,8 @@ class TestUploadWptResults(unittest.TestCase):
         self.start_server(9801)
         returncode, stdout, stderr = self.upload('chrome',
                                                  '3.2.1',
+                                                 'linux',
+                                                 '4.0',
                                                  self.temp_dir,
                                                  make_results(),
                                                  port=9801,
@@ -281,6 +304,8 @@ class TestUploadWptResults(unittest.TestCase):
         )
         returncode, stdout, stderr = self.upload('firefox',
                                                  '1.0.1',
+                                                 'linux',
+                                                 '4.0',
                                                  self.temp_dir,
                                                  duplicated_results,
                                                  port=9801)

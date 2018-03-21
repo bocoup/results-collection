@@ -9,6 +9,8 @@ import json
 import gzip
 import logging
 import os
+import platform
+import re
 import requests
 import shutil
 import subprocess
@@ -30,6 +32,8 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
         os.path.join(raw_results_directory, filename)
         for filename in os.listdir(raw_results_directory)
     ]
+
+    os_version = expand_os_version(os_name, os_version)
 
     summary = summarize(raw_results_files)
 
@@ -162,6 +166,29 @@ def summarize(filenames):
                 summary[test_file][1] += 1
 
     return summary
+
+
+def expand_os_version(name, version):
+    '''Expand the string "*" to describe the version of the system running this
+    script.
+
+    This behavior assumes that the uploading script is run on the same platform
+    from which the results were collected. This assumption may not always hold,
+    but the functionality is implemented in order to satisfy the expectations
+    of the data's consumer.'''
+
+    if version != '*':
+        return version
+
+    if name != platform.system().lower():
+        raise ValueError('Cannot expand version wildcard for a foreign system')
+
+    match = re.search(r'[0-9]+\.[0-9]+', platform.release())
+
+    if match is None:
+        raise ValueError('Cannot infer host platform version')
+
+    return match.group(0)
 
 
 def notify(url, secret, payload):
