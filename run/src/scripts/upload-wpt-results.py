@@ -79,7 +79,7 @@ def main(raw_results_directory, browser_name, browser_version, os_name,
     logger.info('Response status code: %s', status_code)
     logger.info('Response text: %s', response_text)
 
-    assert status_code == 201
+    assert status_code >= 200 and status_code < 300
 
 
 def each_result(raw_results_files):
