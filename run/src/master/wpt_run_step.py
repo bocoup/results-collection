@@ -25,7 +25,6 @@ class WptRunStep(steps.ShellCommand):
         browser_name = properties.getProperty('browser_name')
         command = [
             './wpt', 'run',
-            '--no-restart-on-unexpected',
             '--install-fonts',
             '--log-wptreport', properties.getProperty('log_wptreport'),
             '--log-raw', properties.getProperty('log_raw'),
@@ -52,7 +51,9 @@ class WptRunStep(steps.ShellCommand):
                 '--sauce-user', util.Interpolate('%(secret:sauce_labs_user)s'),
                 '--sauce-key', util.Interpolate('%(secret:sauce_labs_key)s'),
                 '--sauce-tunnel-id', properties.getProperty('workername'),
-                '--sauce-connect-binary', 'sc'
+                '--sauce-connect-binary', 'sc',
+                '--no-restart-on-unexpected',
+                '--run-by-dir', '3'
             ])
         else:
             command = ['xvfb-run', '--auto-servernum'] + command
