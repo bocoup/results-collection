@@ -6,13 +6,12 @@ from buildbot.plugins import steps, util
 
 
 class WPTChunkedStep(steps.Trigger):
-    def __init__(self, platform_id, platform, total_chunks, *args, **kwargs):
-        self.platform_id = platform_id
+    def __init__(self, platform, *args, **kwargs):
         self.platform = platform
         self.total_chunks = total_chunks
 
-        kwargs['name'] = str('Trigger %s chunks on %s' % (
-            total_chunks, platform['browser_name'].title()
+        kwargs['name'] = str('Trigger build for %s@%s' % (
+            platform['browser_name'].title(), platform['browser_release']
         ))
 
         super(WPTChunkedStep, self).__init__(*args, **kwargs)
