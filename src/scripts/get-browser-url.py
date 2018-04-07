@@ -5,7 +5,10 @@
 # found in the LICENSE file.
 
 import argparse
+from datetime import datetime
 import httplib
+import json
+import logging
 import os
 import re
 import subprocess
@@ -14,24 +17,52 @@ import urlparse
 import urllib
 
 
-def main(product, channel, platform, bucket_name):
+def main(product, channel, os_name, bucket_name):
     '''Find the most recent build of a given browser and provide a stable URL
     from which it may be downloaded. Because browser vendors do not necessarily
     commit to hosting outdated builds, this may involve downloading the build
     and persisting it to an internally-managed object storage location.'''
 
-    location = locate_firefox(channel, platform)
+    log_format = '%(asctime)s %(levelname)s %(name)s %(message)s'
+    logging.basicConfig(level='INFO', format=log_format)
+    logger = logging.getLogger('get-browser-url')
 
-    if location is None:
+    source_url = None
+
+    logger.info('Locating artifact for %s browser', product.title())
+
+    if product == 'firefox':
+        source_url = locate_firefox(channel)
+    elif product == 'chrome':
+        source_url = locate_chrome(channel)
+
+    if source_url is None:
         raise Exception('Unable to locate the requested artifact')
 
-    prefix = '%s-%s-%s' % (product, channel, platform)
+    logger.info('Artifact located at %s', source_url)
 
-    return memoize_artifact(bucket_name, prefix, location)
+    directory = '%s-%s-%s' % (product, channel, os_name)
+    identifier = get_identifier(source_url)
+    uri = '%s/%s/%s' % (bucket_name, directory, identifier)
+
+    url = get_mirrored(uri)
+
+    if url == None:
+        logger.info('Unable to find mirrored version. Mirroring...')
+
+        mirror(source_url, uri)
+
+        url = get_mirrored(uri)
+
+    assert url != None
+
+    logger.info('Mirrored version found at %s', url)
+
+    return url
 
 
-def locate_firefox(channel, platform):
-    if channel == 'nightly':
+def locate_firefox(channel):
+    if channel == 'experimental':
         product = 'firefox-nightly-latest-ssl'
     else:
         product = 'firefox-latest-ssl'
@@ -40,6 +71,16 @@ def locate_firefox(channel, platform):
            product)
 
     return head_request(url).getheader('Location')
+
+
+def locate_chrome(channel):
+    if channel == 'experimental':
+        release_name = 'unstable_current'
+    else:
+        release_name = 'stable_current'
+
+    return ('https://dl.google.com/linux/direct/google-chrome-%s_amd64.deb' %
+            release_name)
 
 
 def head_request(url):
@@ -52,48 +93,55 @@ def head_request(url):
     return conn.getresponse()
 
 
-def memoize_artifact(bucket_name, prefix, url):
-    response = head_request(url)
-    etag = re.match('"?([^"]*)"?', response.getheader('etag')).groups()[0]
+def get_identifier(source_artifact_url):
+    response = head_request(source_artifact_url)
+    etag = response.getheader('etag')
+    return re.match('"?([^"]*)"?', etag).groups()[0]
 
-    if not etag:
-        raise ValueError('Could not uniquely identify artifact')
 
-    internal_url = 'https://storage.googleapis.com/%s/%s/%s' % (
-        bucket_name, prefix, etag
-    )
-
-    response = head_request(internal_url)
+def get_mirrored(uri):
+    mirrored = 'https://storage.googleapis.com/%s' % uri
+    response = head_request(mirrored)
 
     if response.status >= 200 and response.status < 300:
-        return internal_url
+        return mirrored
 
-    _, name = tempfile.mkstemp()
+
+def mirror(source_artifact_url, uri):
+    artifact_file = tempfile.mkstemp()[1]
+    metadata_file = tempfile.mkstemp()[1]
 
     try:
         opener = urllib.URLopener()
-        opener.retrieve(url, name)
+        opener.retrieve(source_artifact_url, artifact_file)
+        metadata = {
+            'url': source_artifact_url,
+            'date': str(datetime.utcnow()),
+        }
 
-        return_code = subprocess.check_call([
-            'gsutil', 'cp', name, 'gs://%s/%s/%s' % (bucket_name, prefix, etag)
+        with open(metadata_file, 'w') as handle:
+            json.dump(metadata, handle)
+
+        subprocess.check_call([
+            'gsutil', 'cp', artifact_file, 'gs://%s' % uri
+        ])
+        subprocess.check_call([
+            'gsutil', 'cp', metadata_file, 'gs://%s.json' % uri
         ])
     finally:
-        os.remove(name)
-
-    if return_code != 0:
-        raise Exception('Unable to persist artifact')
-
-    return internal_url
+        os.remove(artifact_file)
+        os.remove(metadata_file)
 
 
 parser = argparse.ArgumentParser(description=main.__doc__)
 parser.add_argument('--product',
-                    choices=('firefox',),
+                    choices=('firefox', 'chrome'),
                     required=True)
 parser.add_argument('--channel',
+                    choices=('stable', 'experimental'),
                     required=True)
-parser.add_argument('--platform',
-                    choices=('linux64',),
+parser.add_argument('--os-name',
+                    choices=('linux',),
                     required=True)
 parser.add_argument('--bucket-name',
                     required=True)
