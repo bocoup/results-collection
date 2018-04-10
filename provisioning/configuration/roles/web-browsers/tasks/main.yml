@@ -42,7 +42,7 @@
     - ../../src/scripts/install-browser.sh
     - ../../src/scripts/read-browser-version.py
 
-# This allows workers to edit the hostsfile via `sudo extend-hosts.py`
+# This allows workers to edit install web browsers via `sudo install-browser.sh`
 - name: Allow application user to install web browsers
   lineinfile:
     dest: /etc/sudoers
