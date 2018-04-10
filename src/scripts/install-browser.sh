@@ -11,6 +11,15 @@ temp_file=$(mktemp)
 install_chrome() {
   deb_archive=$1
 
+  # > Note: Installing Google Chrome will add the Google repository so your
+  # > system will automatically keep Google Chrome up to date. If you don’t
+  # > want Google's repository, do “sudo touch /etc/default/google-chrome”
+  # > before installing the package.
+  #
+  # Source: https://www.google.com/intl/en/chrome/browser/
+  rm --force /etc/default/google-chrome
+  touch /etc/default/google-chrome
+
   # If the environment provides an installation of Google Chrome, the
   # existing binary may take precedence over the one introduced in this
   # script. Remove any previously-existing "alternatives" prior to
