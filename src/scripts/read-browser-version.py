@@ -8,6 +8,7 @@ import argparse
 import re
 import subprocess
 
+
 def firefox(binary):
     '''Determine the version of a provided Mozilla Firefox binary, e.g.:
 
@@ -28,6 +29,7 @@ def firefox(binary):
 
     return match.group(1)
 
+
 def chrome(binary):
     '''Determine the version of a provided Google Chrome binary, e.g.:
 
@@ -45,6 +47,7 @@ def chrome(binary):
         )
 
     return match.group(1)
+
 
 parser = argparse.ArgumentParser(description='''Find the version number of the
                                                 supplied binary''')

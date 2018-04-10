@@ -47,14 +47,14 @@ def main(product, channel, os_name, bucket_name):
 
     url = get_mirrored(uri)
 
-    if url == None:
+    if url is None:
         logger.info('Unable to find mirrored version. Mirroring...')
 
         mirror(source_url, uri)
 
         url = get_mirrored(uri)
 
-    assert url != None
+    assert url is not None
 
     logger.info('Mirrored version found at %s', url)
 
