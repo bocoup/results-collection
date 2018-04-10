@@ -9,7 +9,7 @@ import re
 import subprocess
 
 def firefox(binary):
-    '''Determine the version of a provided Firefox binary, e.g.:
+    '''Determine the version of a provided Mozilla Firefox binary, e.g.:
 
     Channel      | Output                 | Version
     -------------|------------------------|--------
@@ -29,6 +29,12 @@ def firefox(binary):
     return match.group(1)
 
 def chrome(binary):
+    '''Determine the version of a provided Google Chrome binary, e.g.:
+
+    Output                      | Version
+    ----------------------------|--------------
+    Google Chrome 65.0.3325.181 | 65.0.3325.181
+    '''
     stdout = subprocess.check_output([binary, '--version']).strip()
 
     match = re.match('Google Chrome (\d+\.\d+\.\d+\.\d+)', stdout)

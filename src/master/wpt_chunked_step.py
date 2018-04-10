@@ -13,7 +13,7 @@ class WPTChunkedStep(steps.Trigger):
 
         kwargs['name'] = str('Trigger %s chunks on %s@%s' % (
             total_chunks, platform['browser_name'].title(),
-            platform['browser_version']
+            platform['browser_channel']
         ))
 
         super(WPTChunkedStep, self).__init__(*args, **kwargs)
