@@ -15,12 +15,6 @@ class WptRunStep(steps.ShellCommand):
     def __init__(self, *args, **kwargs):
         kwargs['name'] = self.name
         kwargs['command'] = self.makeWptRunCommand
-        kwargs['logfiles'] = {
-            'sauce-connect-log': {
-                'filename': '/tmp/sc.log',
-                'follow': True
-            }
-        }
 
         super(WptRunStep, self).__init__(*args, **kwargs)
 
@@ -35,6 +29,7 @@ class WptRunStep(steps.ShellCommand):
             '--log-wptreport', properties.getProperty('log_wptreport'),
             '--log-raw', properties.getProperty('log_raw'),
             '--',
+            '--log-tbpl', properties.getProperty('log_tbpl'),
             '--this-chunk', properties.getProperty('this_chunk'),
             '--total-chunks', properties.getProperty('total_chunks')
         ]

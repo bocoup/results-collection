@@ -77,31 +77,11 @@ def wpt_run(logger, log_wptreport, log_raw, wpt_args):
 
     logger.info('Invoking the WPT CLI with the following command:')
     logger.info('    %s', ' '.join(command))
-    proc = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    log_streams('wpt-run', proc, logger)
+    proc = subprocess.Popen(command)
 
     proc.wait()
 
     logger.info('WPT CLI exited with return code %s' % proc.returncode)
-
-
-def log_streams(command_name, proc, logger):
-    def target(cmd_name, stream_name, stream, logger):
-        prefix = '%s:%s ' % (cmd_name, stream_name)
-
-        with stream:
-            for line in iter(stream.readline, b''):
-                logger.info(prefix + line.rstrip())
-
-    threading.Thread(
-        target=target, args=(command_name, 'stdout', proc.stdout, logger)
-    ).start()
-
-    threading.Thread(
-        target=target, args=(command_name, 'stderr', proc.stderr, logger)
-    ).start()
 
 
 def normalize_wpt_report(log_wptreport):
