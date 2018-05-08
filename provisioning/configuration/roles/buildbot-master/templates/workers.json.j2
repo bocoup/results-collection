@@ -2,7 +2,15 @@
 {% for worker_host in groups['buildbot-workers'] %}
   {
     "name": "{{hostvars[worker_host].application_user}}",
-    "password": "{{hostvars[worker_host].buildbot_worker_password}}"
+    "password": "{{hostvars[worker_host].buildbot_worker_password}}",
+    {% if hostvars[worker_host].sauce_labs_key %}
+    "sauce_labs": {
+       "name": "wpt-{{hostvars[worker_host].application_user}}",
+       "key": "{{hostvars[worker_host].sauce_labs_key}}"
+    }
+    {% else %}
+    "sauce_labs": null
+    {% endif %}
   }{% if not loop.last %},{% endif %}
 {% endfor %}
 ]

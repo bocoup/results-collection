@@ -4,6 +4,7 @@
 
 from buildbot.plugins import steps
 from buildbot.plugins import util
+from twisted.python import log
 
 
 class WptRunStep(steps.ShellCommand):
@@ -39,6 +40,7 @@ class WptRunStep(steps.ShellCommand):
             '--this-chunk', properties.getProperty('this_chunk'),
             '--total-chunks', properties.getProperty('total_chunks')
         ]
+        log.msg('Workername: %s' % properties.getProperty('workername'))
 
         if properties.getProperty('use_sauce_labs'):
             if browser_name == 'edge':
