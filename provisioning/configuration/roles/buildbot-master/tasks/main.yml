@@ -52,14 +52,11 @@
 
 - name: Create directory to store configuration
   file:
-    path: '{{item}}'
+    path: '{{home_dir}}/master/configuration'
     state: directory
     owner: '{{application_user}}'
     group: '{{application_group}}'
     mode: 0700
-  with_items:
-    - '{{home_dir}}/master/configuration'
-    - '{{home_dir}}/master/configuration/sauce_labs_keys'
 
 - name: Insert configuration values
   copy:
@@ -84,11 +81,11 @@
     - name: wptd_notify_secret
       value: '{{wptd_notify_secret}}'
 
-- name: Insert configuration values
+- name: Insert credentials for running remote browsers
   shell: |
     {% for worker_host in groups['buildbot-workers'] %}
       {% if hostvars[worker_host].sauce_labs_key %}
-        filename={{home_dir}}/master/configuration/sauce_labs_keys/{{hostvars[worker_host].application_user}}
+        filename={{home_dir}}/master/configuration/sauce_labs_key_{{hostvars[worker_host].application_user}}
         echo {{hostvars[worker_host].sauce_labs_key}} > $filename
         chown {{application_user}}:{{application_group}} $filename
         chmod 0700 $filename
