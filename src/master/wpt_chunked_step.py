@@ -43,7 +43,7 @@ class WPTChunkedStep(steps.Trigger):
                         'browser_url': browser_url,
                         'os_name': self.platform['os_name'],
                         'os_version': self.platform['os_version'],
-                        'use_sauce_labs': self.platform.get('sauce', False),
+                        'use_sauce_labs': self.platform.get('remote'),
                         'revision_date': revision_date
                     },
                     'unimportant': unimportant
