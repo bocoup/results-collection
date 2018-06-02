@@ -53,7 +53,42 @@ install_firefox() {
   echo $install_dir/firefox
 }
 
-wget --quiet --output-document $temp_file $url
+install_safari_technology_preview() {
+  archive=$1
+  application_dir='/Applications/Safari Technology Preview.app'
+
+  # Remove previously-installed version, if present
+  rm -rf $application_dir
+
+  # Remove miscellaneous configuration files
+  rm -f /Users/$USER/Library/Preferences/com.apple.SafariTechnologyPreview.plist
+  rm -rf /Users/$USER/Library/Caches/com.apple.SafariTechnologyPreview
+
+  # Install package
+  # http://commandlinemac.blogspot.com/2008/12/installing-dmg-application-from-command.html
+  hdiutil mount $archive
+  installer \
+    -package '/Volumes/Safari Technology Preview/Safari Technology Preview.pkg' \
+    -target '/Volumes/Macintosh HD'
+  hdiutil unmount '/Volumes/Safari Technology Preview'
+
+  # Enable WebDriver
+  # https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari
+  $application_dirContents/Contents/MacOS/safaridriver --enable
+
+  # Disable popup blocker
+  # Derived from the following command targeting the Safari browser
+  # https://github.com/web-platform-tests/wpt/blob/3d6920b84bac82c45a8da5c8b04b6da0c64f02fd/tools/wptrunner/wptrunner/browsers/sauce_setup/safari-prerun.sh
+  defaults write \
+    com.apple.SafariTechnologyPreview \
+    com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically \
+    -bool true
+
+  echo $application_dir/Contents/MacOS/SafariTechnologyPreview
+}
+
+# Prefer `curl` over `wget` because `wget` is not included in macOS High Sierra
+curl --quiet --output $temp_file $url
 
 if [ $? != '0' ]; then
   echo Error downloading browser. >&2
@@ -64,6 +99,8 @@ if [ $browser_name == 'chrome' ]; then
   install_chrome $temp_file
 elif [ $browser_name == 'firefox' ]; then
   install_firefox $temp_file
+elif [ $browser_name == 'safari' ]; then
+  install_safari_technology_preview $temp_file
 else
   echo Unrecognized browser: $browser_name >&2
   false
