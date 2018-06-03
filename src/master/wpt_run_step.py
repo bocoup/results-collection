@@ -4,6 +4,7 @@
 
 from buildbot.plugins import steps
 from buildbot.plugins import util
+import os
 
 
 class WptRunStep(steps.ShellCommand):
@@ -23,6 +24,11 @@ class WptRunStep(steps.ShellCommand):
         }
 
         super(WptRunStep, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def is_safari_technology_preview(properties):
+        return (properties.getProperty('browser_name') == 'safari' and
+                properties.getProperty('browser_channel') == 'experimental')
 
     @staticmethod
     @util.renderer
@@ -73,12 +79,25 @@ class WptRunStep(steps.ShellCommand):
                 '--run-by-dir', '3'
             ])
         else:
-            command = ['xvfb-run', '--auto-servernum'] + command
+            if WptRunStep.is_safari_technology_preview(properties):
+                # The WPT CLI does not support specifying a path to the Safari
+                # binary. However, if the corresponding WebDriver binary is
+                # used, then that process will launch Safari Technology
+                # Preview. Use the path to the browser executable to infer the
+                # path to the corresponding WebDriver binary.
+                webdriver_binary = os.path.join(
+                    os.path.dirname(properties.getProperty('browser_binary')),
+                    'safaridriver'
+                )
+                command.extend(['--webdriver-binary', webdriver_binary])
+            elif browser_name != 'safari':
+                command = ['xvfb-run', '--auto-servernum'] + command
 
-            command.extend([
-                '--binary', properties.getProperty('browser_binary'),
-                '--install-fonts',
-            ])
+                command.extend([
+                    '--binary', properties.getProperty('browser_binary')
+                ])
+
+            command.append('--install-fonts')
 
             browser_id = browser_name
 
