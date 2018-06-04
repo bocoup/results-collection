@@ -27,3 +27,16 @@ buildbot-linux-workers:
       application_user: george
       buildbot_worker_password: baz
       sauce_labs_key: NULL
+
+# Due to the proprietary nature of the macOS platform, the hosts defined by
+# this group cannot be created. They are defined in order to validate the other
+# parts of the system that operate overall available hosts, but they are
+# explicitly ignored during deployment (see the `limit` Ansible configuration
+# in the project's Vagrantfile)
+buildbot-macos-workers:
+  hosts:
+    localworker3:
+      ansible_connection: local
+      application_user: ricardo
+      buildbot_worker_password: bing
+      sauce_labs_key: NULL
