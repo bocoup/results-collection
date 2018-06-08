@@ -100,6 +100,8 @@ def locate_chrome(channel):
 
 
 def locate_safari(channel):
+    '''Find a public URL for Safari Technology Preview by scraping the relevant
+    "downloads" page on apple.com'''
     conn = httplib.HTTPSConnection('developer.apple.com')
     conn.connect()
     try:
@@ -111,9 +113,13 @@ def locate_safari(channel):
     finally:
         conn.close()
 
-    match = re.search('http[^\s]+\.dmg', contents, re.IGNORECASE)
+    # The search criteria should include "High Sierra" in order to avoid
+    # selecting an incompatible binary intended for the Mojave release of macOS
+    match = re.search(
+        '(http[^\s]+\.dmg).*high\s*sierra', contents, re.IGNORECASE
+    )
 
-    return match and match.group(0)
+    return match and match.group(1)
 
 
 def head_request(url):
