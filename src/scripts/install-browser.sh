@@ -69,12 +69,17 @@ install_safari_technology_preview() {
   hdiutil mount $archive
   installer \
     -package '/Volumes/Safari Technology Preview/Safari Technology Preview.pkg' \
-    -target '/Volumes/Macintosh HD'
-  hdiutil unmount '/Volumes/Safari Technology Preview'
+    -target '/Volumes/Macintosh HD' >&2 || return 1
+  result=$?
+  hdiutil unmount '/Volumes/Safari Technology Preview' >&2
+
+  if [ $result != '0' ]; then
+    return 1
+  fi
 
   # Enable WebDriver
   # https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari
-  $application_dirContents/Contents/MacOS/safaridriver --enable
+  "$application_dir/Contents/MacOS/safaridriver" --enable >&2 || return 1
 
   # Disable popup blocker
   # Derived from the following command targeting the Safari browser
@@ -82,13 +87,13 @@ install_safari_technology_preview() {
   defaults write \
     com.apple.SafariTechnologyPreview \
     com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically \
-    -bool true
+    -bool true >&2 || return 1
 
   echo $application_dir/Contents/MacOS/SafariTechnologyPreview
 }
 
 # Prefer `curl` over `wget` because `wget` is not included in macOS High Sierra
-curl --quiet --output $temp_file $url
+curl --silent --output $temp_file $url
 
 if [ $? != '0' ]; then
   echo Error downloading browser. >&2
@@ -108,6 +113,6 @@ fi
 
 result=$?
 
-rm --force $temp_file
+rm -f $temp_file
 
 exit $result
