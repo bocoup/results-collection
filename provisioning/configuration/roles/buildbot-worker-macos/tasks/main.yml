@@ -5,7 +5,7 @@
     dest: /Library/LaunchDaemons/buildbot.worker.plist
 
 - name: Enable the system service
-  command: /Library/LaunchDaemons/buildbot.worker.plist
+  command: launchctl load -w /Library/LaunchDaemons/buildbot.worker.plist
 
 # https://discussions.apple.com/thread/8200117
 - name: Disable Spotlight
