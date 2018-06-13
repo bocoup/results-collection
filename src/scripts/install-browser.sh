@@ -66,7 +66,7 @@ install_safari_technology_preview() {
 
   # Install package
   # http://commandlinemac.blogspot.com/2008/12/installing-dmg-application-from-command.html
-  hdiutil mount $archive
+  hdiutil mount $archive >&2
   installer \
     -package '/Volumes/Safari Technology Preview/Safari Technology Preview.pkg' \
     -target '/Volumes/Macintosh HD' >&2 || return 1
