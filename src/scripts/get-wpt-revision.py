@@ -49,4 +49,6 @@ if __name__ == '__main__':
                         choices=('hourly', 'two_hourly', 'six_hourly',
                                  'twelve_hourly', 'daily', 'weekly'))
 
-    print main(**vars(parser.parse_args()))
+    import sys
+    sys.stderr.write('%s\n' % main(**vars(parser.parse_args())))
+    print 'master'
