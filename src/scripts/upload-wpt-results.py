@@ -80,6 +80,10 @@ def main(raw_results_directory, product, browser_channel, browser_version,
               "run_info":{run_info}
             }}'''.format(**metadata))
 
+        logger.info('Not actually uploading')
+        with open(filename, 'r') as handle:
+            logger.info(handle.read())
+        return
         response = requests.post(
             url,
             auth=(user_name, secret),
