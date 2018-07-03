@@ -60,6 +60,7 @@ def main(browser_name, channel, application, os_name, bucket_name):
         raise Exception('Unable to locate the requested artifact')
 
     logger.info('Artifact located at %s', source_url)
+    return source_url
 
     directory = '%s-%s-%s' % (product_id, channel, os_name)
     identifier = get_identifier(source_url)

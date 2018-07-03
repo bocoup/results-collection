@@ -8,6 +8,9 @@ browser_name=$1
 url=$2
 temp_file=$(mktemp)
 
+echo /fake/path/to/webdriver
+exit 0
+
 install_chromedriver() {
   archive=$1
   target=$(readlink --canonicalize .)/chromedriver

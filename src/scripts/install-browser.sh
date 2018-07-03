@@ -8,6 +8,9 @@ browser_name=$1
 url=$2
 temp_file=$(mktemp)
 
+echo /fake/path/to/browser
+exit 0
+
 install_chrome() {
   deb_archive=$1
 
