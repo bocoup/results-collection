@@ -60,10 +60,6 @@ install_safari_technology_preview() {
   # Remove previously-installed version, if present
   rm -rf $application_dir
 
-  # Remove miscellaneous configuration files
-  rm -f /Users/$USER/Library/Preferences/com.apple.SafariTechnologyPreview.plist
-  rm -rf /Users/$USER/Library/Caches/com.apple.SafariTechnologyPreview
-
   # Install package
   # http://commandlinemac.blogspot.com/2008/12/installing-dmg-application-from-command.html
   hdiutil mount $archive >&2
@@ -79,15 +75,12 @@ install_safari_technology_preview() {
 
   # Enable WebDriver
   # https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari
-  "$application_dir/Contents/MacOS/safaridriver" --enable >&2 || return 1
-
-  # Disable popup blocker
-  # Derived from the following command targeting the Safari browser
-  # https://github.com/web-platform-tests/wpt/blob/3d6920b84bac82c45a8da5c8b04b6da0c64f02fd/tools/wptrunner/wptrunner/browsers/sauce_setup/safari-prerun.sh
-  defaults write \
-    com.apple.SafariTechnologyPreview \
-    com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically \
-    -bool true >&2 || return 1
+  #
+  # Note: as of 2018-07-13, this command has no effect in non-UI sessions such
+  # as SSH or launchd. Until this is resolved, the command must be manually
+  # invoked during initial system provisioning (the setting will persist across
+  # new installations of the browser).
+  #"$application_dir/Contents/MacOS/safaridriver" --enable >&2 || return 1
 
   echo $application_dir/Contents/MacOS/SafariTechnologyPreview
 }
