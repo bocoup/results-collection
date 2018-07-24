@@ -1,11 +1,22 @@
 ---
+- name: Create a GUI user
+  command: |
+    dscl . -create /Users/{{application_user}}
+    dscl . -create /Users/{{application_user}} UserShell /bin/bash
+    dscl . -passwd /Users/{{application_user}} password
+
+- name: Copy user automation script into place
+  copy:
+      src: start-buildbot.applescript
+      dest: /Users/{{application_user}}
+
 - name: Define a system service
   template:
-    src: buildbot.worker.plist.j2
-    dest: /Library/LaunchDaemons/buildbot.worker.plist
+    src: start.buildbot.worker.plist.j2
+    dest: /Library/LaunchDaemons/start.buildbot.worker.plist
 
 - name: Enable the system service
-  command: launchctl load -w /Library/LaunchDaemons/buildbot.worker.plist
+  command: launchctl load -w /Library/LaunchDaemons/start.buildbot.worker.plist
 
 # https://discussions.apple.com/thread/8200117
 - name: Disable Spotlight

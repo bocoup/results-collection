@@ -1,0 +1,24 @@
+tell application "Terminal"
+	set ownerTab to do script
+		"/usr/local/bin/twistd " &
+		"--nodaemon " &
+		"--python=buildbot.tac " &
+		"--logfile=buildbot.log " &
+		"--prefix=worker"
+	set ownerID to id of current settings of ownerTab
+	
+	repeat
+		delay 1
+		if not busy of ownerTab then exit repeat
+	end repeat
+	
+	repeat with w in windows
+		repeat with t in tabs of w
+			if (id of current settings of t) is ownerID then
+				set ownerWindow to w
+			end if
+		end repeat
+	end repeat
+	
+	close ownerWindow
+end tell
