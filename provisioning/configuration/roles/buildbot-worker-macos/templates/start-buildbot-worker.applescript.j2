@@ -1,10 +1,5 @@
 tell application "Terminal"
-	set ownerTab to do script
-		"/usr/local/bin/twistd " &
-		"--nodaemon " &
-		"--python=buildbot.tac " &
-		"--logfile=buildbot.log " &
-		"--prefix=worker"
+	set ownerTab to do script "cd /Users/{{application_user}}/worker && /usr/local/bin/twistd --nodaemon --python=buildbot.tac --logfile=buildbot.log --prefix=worker"
 	set ownerID to id of current settings of ownerTab
 	
 	repeat

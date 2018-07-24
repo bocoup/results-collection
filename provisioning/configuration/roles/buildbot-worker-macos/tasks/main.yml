@@ -6,8 +6,8 @@
     dscl . -passwd /Users/{{application_user}} password
 
 - name: Copy user automation script into place
-  copy:
-      src: start-buildbot.applescript
+  template:
+      src: start-buildbot-worker.applescript
       dest: /Users/{{application_user}}
 
 - name: Define a system service
