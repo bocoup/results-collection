@@ -35,3 +35,12 @@
     /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant DidSeePrivacy -bool TRUE
     /usr/bin/defaults write "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant DidSeeSiriSetup -bool TRUE
     /usr/sbin/chown "${USER_UID}" "${USER_HOME}"/Library/Preferences/com.apple.SetupAssistant.plist
+
+# The only known means to automate this process are via an unofficial
+# encryption algorithm whose original source is no longer available
+# Republished at https://github.com/xfreebird/kcpassword/blob/master/kcpassword
+- name: Request manual intervention for user login
+  pause:
+    prompt: |
+      Please ensure that system is configured to automatically log in
+      to the "{{application_user}}" user account at startup.
