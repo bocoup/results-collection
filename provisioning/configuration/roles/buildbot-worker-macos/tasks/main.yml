@@ -1,7 +1,7 @@
 ---
 - name: Copy user automation script into place
   template:
-      src: start-buildbot-worker.applescript
+      src: start-buildbot-worker.applescript.j2
       dest: /Users/{{application_user}}
 
 - name: Define a system service
