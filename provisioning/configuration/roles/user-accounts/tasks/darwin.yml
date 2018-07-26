@@ -9,6 +9,11 @@
     prompt: Please delete account for user named "{{application_user}}"
   when: user_home.stat.exists
 
+- name: Create a group
+  shell: |
+    dseditgroup -o read {{application_group}} ||
+      dseditgroup -o create -r "results collectors" {{application_group}}
+
 - name: Create a GUI user
   shell: |
     #!/bin/bash
@@ -16,6 +21,7 @@
     set -e
 
     /usr/sbin/sysadminctl -addUser {{application_user}}
+    dseditgroup -o edit -a {{application_user}} -t user {{application_group}}
 
     # Source: "Suppressing the Data & Privacy pop-up window on macOS High
     # Sierra"
