@@ -47,6 +47,6 @@
 # Republished at https://github.com/xfreebird/kcpassword/blob/master/kcpassword
 - name: Request manual intervention for user login
   pause:
-    prompt: |
+    prompt: |-
       Please ensure that system is configured to automatically log in
       to the "{{application_user}}" user account at startup.
