@@ -16,8 +16,6 @@ install_chromedriver() {
 
   unzip $archive || return 1
 
-  chown --recursive $SUDO_USER $target >&2 || return 1
-
   echo $target
 }
 
@@ -28,8 +26,6 @@ install_geckodriver() {
   rm --force $target
 
   tar -xvf $archive >&2 || return 1
-
-  chown --recursive $SUDO_USER $target >&2 || return 1
 
   echo $target
 }
