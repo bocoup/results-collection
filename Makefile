@@ -6,9 +6,17 @@ SHELL := /bin/bash
 
 all: lint test
 
-.PHONY: lint
-lint: .deps
+.PHONY: lint-ansible
+lint-ansible:
+	cd provisioning/configuration && \
+		ansible-playbook --syntax-check provision.yml
+
+.PHONY: lint-python
+lint-python: .deps
 	pycodestyle .
+
+.PHONY: lint
+lint: lint-python lint-ansible
 
 .PHONY: test
 test: .deps
