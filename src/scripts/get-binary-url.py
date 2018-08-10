@@ -65,9 +65,6 @@ def main(browser_name, channel, application, os_name, bucket_name):
     identifier = get_identifier(source_url)
     uri = '%s/%s/%s' % (bucket_name, directory, identifier)
 
-    print uri
-    return
-
     url = get_mirrored(uri)
 
     if url is None:
