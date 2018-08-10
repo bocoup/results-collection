@@ -99,12 +99,15 @@ def locate_geckodriver():
         'https://api.github.com/repos/mozilla/geckodriver/releases/latest'
     )
     conn = httplib.HTTPSConnection(parts.netloc)
-    # > By default, all requests to https://api.github.com receive the v3
-    # > version of the REST API. We encourage you to explicitly request this
-    # > version via the Accept header.
-    #
-    # Source: https://developer.github.com/v3/
-    headers={'User-Agent': 'wpt-results-collector', 'Accept': 'application/vnd.github.v3+json'}
+    headers={
+        'User-Agent': 'wpt-results-collector',
+        # > By default, all requests to https://api.github.com receive the v3
+        # > version of the REST API. We encourage you to explicitly request
+        # > this version via the Accept header.
+        #
+        # Source: https://developer.github.com/v3/
+        'Accept': 'application/vnd.github.v3+json'
+    }
     conn.request('GET', parts.path, headers=headers)
 
     data = json.loads(conn.getresponse().read())
