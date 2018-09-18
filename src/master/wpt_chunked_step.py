@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 from buildbot.plugins import steps, util
+from twisted.internet import defer
 
 
 class WPTChunkedStep(steps.Trigger):
@@ -18,6 +19,7 @@ class WPTChunkedStep(steps.Trigger):
 
         super(WPTChunkedStep, self).__init__(*args, **kwargs)
 
+    @defer.inlineCallbacks
     def getSchedulersAndProperties(self):
         spec = []
         browser_name = self.platform['browser_name']
@@ -28,6 +30,7 @@ class WPTChunkedStep(steps.Trigger):
         webdriver_url = self.build.properties.getProperty(
             'webdriver_url_%s' % browser_name
         )
+        log_url = yield self.build.getUrl()
 
         for scheduler in self.schedulerNames:
             unimportant = scheduler in self.unimportantSchedulerNames
@@ -46,9 +49,10 @@ class WPTChunkedStep(steps.Trigger):
                         'webdriver_url': webdriver_url,
                         'os_name': self.platform['os_name'],
                         'os_version': self.platform['os_version'],
-                        'use_sauce_labs': self.platform.get('remote')
+                        'use_sauce_labs': self.platform.get('remote'),
+                        'log_url': log_url
                     },
                     'unimportant': unimportant
                 })
 
-        return spec
+        defer.returnValue(spec)
