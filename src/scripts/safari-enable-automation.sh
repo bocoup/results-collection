@@ -72,14 +72,17 @@ toggle_automation() {
   echo Toggling automation in Safari
 
   osascript - <<SCRIPT
-  activate application "$browser_name"
+  set developCheckboxLabel to "Show Develop menu in menu bar"
+  set applicationName to "$browser_name"
+
+  activate application applicationName
 
   tell application "System Events"
       set ready to false
 
       repeat while not ready
           repeat with this_process in every process
-              if name of this_process as string is "$browser_name" then
+              if name of this_process as string is applicationName then
                   set ready to true
               end if
           end repeat
@@ -91,7 +94,7 @@ toggle_automation() {
       -- to be available. This delay represents an unavoidable race condition as
       -- there is no deterministic method to verify that the prompt will *not* be
       -- displayed.
-      tell process "$browser_name"
+      tell process applicationName
           log "Waiting for upgrade prompt..."
           delay 2
 
@@ -103,11 +106,30 @@ toggle_automation() {
               end if
           end repeat
 
+          -- Enable the "Develop" menu
+          click menu item "Preferences…" of menu applicationName of menu bar item applicationName of menu bar 1
+
+          -- The window title varies according to type of Prefs initially
+          -- selected, so save to a variable
+          set currentWindowName to get value of static text 1 of window 1 as string
+
+          click button "Advanced" of toolbar 1 of window currentWindowName
+          tell group 1 of group 1 of window "Advanced"
+              set checkbox_state to value of checkbox developCheckboxLabel as number
+
+              if checkbox_state = 0 then
+                  click checkbox developCheckboxLabel
+              end if
+          end tell
+
+          -- Close the menu
+          click button 1 of window "Advanced"
+
           click menu item "Allow Remote Automation" of menu "Develop" of menu bar item "Develop" of menu bar 1
       end tell
   end tell
 
-  tell application "$browser_name" to quit
+  tell application applicationName to quit
 SCRIPT
 }
 
