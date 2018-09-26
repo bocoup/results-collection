@@ -49,7 +49,7 @@ is_automation_enabled() {
         --write-out '%{http_code}' \
         http://localhost:9876/session \
       || true)
-    echo $status_code
+
     if [ "$status_code" == "405" ]; then
       break
     fi
