@@ -35,11 +35,14 @@
       end tell
     ' | osascript -
 
-- name: Install script for enabling remote automation in Safari
+- name: Install scripts for administering Safari
   copy:
-    src: ../../src/scripts/safari-enable-automation.sh
+    src: '{{itemm}}'
     dest: /usr/local/bin/
     mode: 0755
+  with_items:
+    - ../../src/scripts/safari-enable-automation.sh
+    - ../../src/scripts/safari-disable-popup-blocker.sh
 
 - name: Allow application user to enable remote automation in Safari
   lineinfile:
